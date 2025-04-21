@@ -7,6 +7,7 @@ import { ROUTES } from "../constants/routes";
 
 import Home from "./Home";
 import DashboardLayout from "./Layout";
+import TeacherListPage from "./list/Teachers";
 
 
 
@@ -15,6 +16,7 @@ export function Router() {
     <Routes>
       <Route path="/" element={<DashboardLayout />}>
         <Route index element={<Home />} />
+        <Route path={ROUTES.teachers} element={<TeacherListPage />} />
      
       </Route>
     </Routes>

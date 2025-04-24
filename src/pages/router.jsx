@@ -10,6 +10,7 @@ import DashboardLayout from "./Layout";
 import TeacherListPage from "./list/Teachers";
 import StudentListPage from "./list/Students";
 import ParentsListPage from "./list/Parents";
+import LessonsPage from "./Lessons";
 
 
 
@@ -23,7 +24,7 @@ export function Router() {
         <Route path={ROUTES.parents} element={<ParentsListPage />} />
         <Route path={ROUTES.subjects} element={<ParentsListPage />} />
         <Route path={ROUTES.classes} element={<ParentsListPage />} />
-        <Route path={ROUTES.lessons} element={<ParentsListPage />} />
+        <Route path={ROUTES.lessons} element={<LessonsPage/>} />
         <Route path={ROUTES.exams} element={<ParentsListPage />} />
         <Route path={ROUTES.assignments} element={<ParentsListPage />} />
         <Route path={ROUTES.results} element={<ParentsListPage />} />

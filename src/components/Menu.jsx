@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-// Sample role to control visibility (replace with actual logic)
-const userRole = "admin"; // This can be dynamic based on context or props
+// Sample dynamic role
+const userRole = "admin"; // This should come from context/auth in real apps
 
 const menuItems = [
   {
@@ -39,7 +39,7 @@ const Menu = () => {
     <div className="mt-4 text-sm">
       {menuItems.map((section) => (
         <div className="flex flex-col gap-2" key={section.title}>
-          <span className="hidden lg:block text-gray-400 font-light my-4">
+          <span className="hidden lg:block text-gray-400 font-semibold tracking-wider mt-6 mb-2 px-2">
             {section.title}
           </span>
           {section.items.map((item) => {
@@ -49,10 +49,16 @@ const Menu = () => {
               <Link
                 to={item.href}
                 key={item.label}
-                className="flex items-center justify-center lg:justify-start gap-4 text-black py-2 md:px-2 hover:bg-cyan-200 border rounded hover:border-black hover:shadow-md p-1"
+                className="flex items-center gap-4 text-gray-700 py-2 px-4 rounded-md hover:bg-cyan-100 hover:text-cyan-900 hover:shadow-sm group"
               >
-                <img src={item.icon} alt={item.label} width={20} height={20}  />
-                <span className="hidden lg:block">{item.label}</span>
+                <img
+                  src={item.icon}
+                  alt={item.label}
+                  width={16}
+                  height={16}
+                  className="transition-transform "
+                />
+                <span className="hidden lg:block font-medium">{item.label}</span>
               </Link>
             );
           })}

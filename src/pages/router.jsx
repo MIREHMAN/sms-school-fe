@@ -9,9 +9,9 @@ import Home from "./Home";
 import DashboardLayout from "./Layout";
 import TeacherListPage from "./list/Teachers";
 import StudentListPage from "./list/Students";
-import ParentsListPage from "./list/Parents";
 import SubjectsListPage from "./list/Subjects";
 import LessonsPage from "./Lessons";
+import ParentListPage from "./list/Parents";
 
 
 
@@ -22,17 +22,17 @@ export function Router() {
         <Route index element={<Home />} />
         <Route path={ROUTES.teachers} element={<TeacherListPage />} />
         <Route path={ROUTES.students} element={<StudentListPage />} />
-        <Route path={ROUTES.parents} element={<ParentsListPage />} />
+        <Route path={ROUTES.parents} element={<ParentListPage />} />
         <Route path={ROUTES.subjects} element={<SubjectsListPage />} />
-        <Route path={ROUTES.classes} element={<ParentsListPage />} />
+        <Route path={ROUTES.classes} element={<ParentListPage />} />
         <Route path={ROUTES.lessons} element={<LessonsPage/>} />
-        <Route path={ROUTES.exams} element={<ParentsListPage />} />
-        <Route path={ROUTES.assignments} element={<ParentsListPage />} />
-        <Route path={ROUTES.results} element={<ParentsListPage />} />
-        <Route path={ROUTES.attendance} element={<ParentsListPage />} />
-        <Route path={ROUTES.events} element={<ParentsListPage />} />
-        <Route path={ROUTES.messages} element={<ParentsListPage />} />
-        <Route path={ROUTES.announcements} element={<ParentsListPage />} />
+        <Route path={ROUTES.exams} element={<ParentListPage />} />
+        <Route path={ROUTES.assignments} element={<ParentListPage />} />
+        <Route path={ROUTES.results} element={<ParentListPage />} />
+        <Route path={ROUTES.attendance} element={<ParentListPage />} />
+        <Route path={ROUTES.events} element={<ParentListPage />} />
+        <Route path={ROUTES.messages} element={<ParentListPage />} />
+        <Route path={ROUTES.announcements} element={<ParentListPage />} />
      
       </Route>
     </Routes>

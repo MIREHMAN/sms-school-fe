@@ -3,34 +3,35 @@ import { Link } from "react-router-dom";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import Actions from "@/components/Actions";
 
 // Dummy Data
-const dummyTeachers = [
+const dummyStudents = [
   {
-    id: "T001",
-    name: "Jane Doe",
-    email: "jane.doe@example.com",
+    id: "S001",
+    name: "Alice Johnson",
+    email: "alice.johnson@example.com",
     img: "/avatar.png",
-    subjects: [{ name: "Math" }, { name: "Physics" }],
-    classes: [{ name: "Class A" }, { name: "Class B" }],
-    phone: "123-456-7890",
-    address: "123 Elm Street",
+    subjects: [{ name: "History" }, { name: "Geography" }],
+    classes: [{ name: "Grade 10" }],
+    phone: "111-222-3333",
+    address: "12 Maple Lane",
   },
   {
-    id: "T002",
-    name: "John Smith",
-    email: "john.smith@example.com",
+    id: "S002",
+    name: "Bob Martinez",
+    email: "bob.martinez@example.com",
     img: "/avatar.png",
-    subjects: [{ name: "English" }],
-    classes: [{ name: "Class C" }],
-    phone: "987-654-3210",
-    address: "456 Oak Avenue",
+    subjects: [{ name: "Biology" }],
+    classes: [{ name: "Grade 11" }],
+    phone: "444-555-6666",
+    address: "89 Birch Street",
   },
 ];
 
 const columns = [
   { header: "Info", accessor: "info" },
-  { header: "Teacher ID", accessor: "teacherId", className: "hidden md:table-cell" },
+  { header: "Student ID", accessor: "studentId", className: "hidden md:table-cell" },
   { header: "Subjects", accessor: "subjects", className: "hidden md:table-cell" },
   { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
   { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
@@ -63,26 +64,20 @@ const renderRow = (item) => (
     <td className="hidden md:table-cell">
       {item.classes.map((c) => c.name).join(", ")}
     </td>
-    <td className="hidden md:table-cell">{item.phone}</td>
-    <td className="hidden md:table-cell">{item.address}</td>
+    <td className="hidden lg:table-cell">{item.phone}</td>
+    <td className="hidden lg:table-cell">{item.address}</td>
     <td>
-      <div className="flex items-center gap-2">
-        <Link to={`/teachers/${item.id}`}>
-          <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
-            <img src="/view.png" alt="View" width={16} height={16} />
-          </button>
-        </Link>
-      </div>
+      <Actions />
     </td>
   </tr>
 );
 
 const StudentListPage = () => {
-  const [teachers, setTeachers] = useState([]);
+  const [students, setStudents] = useState([]);
 
   useEffect(() => {
     // Simulate fetching data
-    setTeachers(dummyTeachers);
+    setStudents(dummyStudents);
   }, []);
 
   return (
@@ -104,10 +99,10 @@ const StudentListPage = () => {
       </div>
 
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={teachers} />
+      <Table columns={columns} renderRow={renderRow} data={students} />
 
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination totalPages={5} totalResults={students.length} />
     </div>
   );
 };

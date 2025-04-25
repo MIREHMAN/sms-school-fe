@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import Actions from "@/components/Actions";
 
 // Dummy Data
 const dummyTeachers = [
@@ -30,12 +31,12 @@ const dummyTeachers = [
 
 const columns = [
   { header: "Info", accessor: "info" },
-  { header: "Teacher ID", accessor: "teacherId", className: "hidden md:table-cell" },
+  { header: "Teacher ID", accessor: "id", className: "hidden md:table-cell" },
   { header: "Subjects", accessor: "subjects", className: "hidden md:table-cell" },
   { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
   { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
   { header: "Address", accessor: "address", className: "hidden lg:table-cell" },
-  { header: "Actions", accessor: "action" },
+  { header: "Actions", accessor: "actions" },
 ];
 
 const renderRow = (item) => (
@@ -63,16 +64,10 @@ const renderRow = (item) => (
     <td className="hidden md:table-cell">
       {item.classes.map((c) => c.name).join(", ")}
     </td>
-    <td className="hidden md:table-cell">{item.phone}</td>
-    <td className="hidden md:table-cell">{item.address}</td>
+    <td className="hidden lg:table-cell">{item.phone}</td>
+    <td className="hidden lg:table-cell">{item.address}</td>
     <td>
-      <div className="flex items-center gap-2">
-        <Link to={`/teachers/${item.id}`}>
-          <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
-            <img src="/view.png" alt="View" width={16} height={16} />
-          </button>
-        </Link>
-      </div>
+    <Actions />
     </td>
   </tr>
 );
@@ -107,7 +102,7 @@ const TeacherListPage = () => {
       <Table columns={columns} renderRow={renderRow} data={teachers} />
 
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination totalPages={5} totalResults={teachers.length} />
     </div>
   );
 };

@@ -249,7 +249,7 @@ export default function ClassesPage() {
             <div className="relative flex-grow">
               <input
                 type="text"
-                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full transition-all"
+                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 outline-none w-full transition-all"
                 placeholder="Search classes..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -264,7 +264,7 @@ export default function ClassesPage() {
               <button
                 className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap ${
                   selectedFilter === 'All' 
-                    ? 'bg-blue-100 text-blue-600 font-medium'
+                    ? 'bg-purple-100 text-purple-600 font-medium'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
                 onClick={() => setSelectedFilter('All')}
@@ -276,7 +276,7 @@ export default function ClassesPage() {
                   key={category}
                   className={`px-3 py-1.5 rounded-lg text-sm flex items-center whitespace-nowrap ${
                     selectedFilter === category
-                      ? 'bg-blue-100 text-blue-600 font-medium'
+                      ? 'bg-purple-100 text-purple-600 font-medium'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                   onClick={() => setSelectedFilter(category)}
@@ -289,7 +289,7 @@ export default function ClassesPage() {
             
             {/* Add button */}
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm whitespace-nowrap"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm whitespace-nowrap"
               onClick={() => setShowModal(true)}
             >
               <Plus size={18} />
@@ -391,7 +391,7 @@ export default function ClassesPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Class Name</label>
                   <input
                     type="text"
-                    className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
                     placeholder="Enter class name (e.g., Grade 11)"
                     value={newClass}
                     onChange={(e) => setNewClass(e.target.value)}
@@ -408,7 +408,7 @@ export default function ClassesPage() {
                         type="button"
                         className={`px-3 py-1.5 rounded-lg text-sm flex items-center ${
                           newCategory === category
-                            ? 'bg-blue-100 text-blue-600 border-2 border-blue-300'
+                            ? 'bg-purple-100 text-purple-600 border-2 border-purple-300'
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-2 border-transparent'
                         }`}
                         onClick={() => setNewCategory(category)}
@@ -421,15 +421,15 @@ export default function ClassesPage() {
                 </div>
                 
                 <div className="pt-2">
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-100 flex items-start">
-                    <div className="text-blue-500 mt-0.5 mr-2">
+                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-4  00 flex items-start">
+                    <div className="text-purple-500 mt-0.5 mr-2">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
                       </svg>
                     </div>
-                    <p className="text-sm text-blue-700">
+                    <p className="text-sm text-purple-700">
                       Class capacity is set to 35 students by default. You can change this later in the class settings.
                     </p>
                   </div>
@@ -444,7 +444,7 @@ export default function ClassesPage() {
                   Cancel
                 </button>
                 <button
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50 disabled:pointer-events-none"
+                  className="px-4 py-2 bg-purple-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50 disabled:pointer-events-none"
                   onClick={handleAddClass}
                   disabled={!newClass.trim()}
                 >

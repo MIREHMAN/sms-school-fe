@@ -116,7 +116,7 @@ export default function SubjectsListPage() {
               className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm hover:shadow transition-all duration-300 transform hover:scale-105"
               onClick={() => setShowModal(true)}
             >
-              <Plus size={20} />
+              <Plus size={19} />
               <span className="hidden sm:inline text-sm ">Add Subject</span>
             </button>
           </div>

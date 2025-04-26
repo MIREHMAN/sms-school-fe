@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, Book, Search, ChevronRight, BookOpen, Check, Trash2, Edit, Award, Calculator, Globe, Microscope, FlaskRound as Flask, Binary, Atom, Map, PenTool } from 'lucide-react';
+import TableSearch from '@/components/TableSearch';
 
 export default function SubjectsListPage() {
   const [subjects, setSubjects] = useState([
@@ -84,7 +85,7 @@ export default function SubjectsListPage() {
           <div>
             <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} transition-all duration-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
               Subjects
-              <div className={`h-1 w-20 bg-blue-500 mt-2 rounded-full transform transition-all duration-300 ${isLoaded ? 'scale-x-100' : 'scale-x-0'}`}></div>
+              <div className={`h-1 w-32  bg-purple-500 mt-2 rounded-full transform transition-all duration-700 ${isLoaded ? 'scale-x-100' : 'scale-x-0'}`}></div>
             </h1>
             <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-500'} transition-all duration-500 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               Manage your educational subjects
@@ -92,7 +93,8 @@ export default function SubjectsListPage() {
           </div>
           
           <div className="flex items-center gap-4 w-full sm:w-auto">
-            <div className={`relative flex-grow sm:max-w-xs transition-all duration-500 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <TableSearch/>
+            {/* <div className={`relative flex-grow sm:max-w-xs transition-all duration-500 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               <input
                 type="text"
                 placeholder="Search subjects..."
@@ -101,7 +103,7 @@ export default function SubjectsListPage() {
                 className={`pl-10 pr-4 py-2 rounded-lg w-full border ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
               />
               <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
-            </div>
+            </div> */}
             
             {/* <button
               className={`p-2 rounded-full ${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-200 hover:bg-gray-300'} transition-all duration-300`}
@@ -111,11 +113,11 @@ export default function SubjectsListPage() {
             </button>
              */}
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm hover:shadow transition-all duration-300 transform hover:scale-105"
+              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm hover:shadow transition-all duration-300 transform hover:scale-105"
               onClick={() => setShowModal(true)}
             >
               <Plus size={20} />
-              <span className="hidden sm:inline">Add Subject</span>
+              <span className="hidden sm:inline text-sm ">Add Subject</span>
             </button>
           </div>
         </div>
@@ -207,15 +209,15 @@ export default function SubjectsListPage() {
                 <label className="block mb-2 text-sm font-medium">Subject Name</label>
                 <input
                   type="text"
-                  className={`w-full border p-3 rounded-lg mb-4 ${
+                  className={`outline-none w-full border p-3 rounded-lg mb-4 ring-[1.5px] ring-gray-300 ${
                     isDarkMode 
                       ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500' 
-                      : 'border-gray-300 focus:border-blue-500'
-                  } focus:ring focus:ring-blue-200 transition-all`}
+                      : 'border-gray-300 focus:border-purple-500'
+                  } focus:ring focus:ring-purple-200 transition-all`}
                   placeholder="Enter subject name"
                   value={newSubject}
                   onChange={(e) => setNewSubject(e.target.value)}
-                  autoFocus
+                  
                 />
                 
                 <label className="block mb-2 text-sm font-medium">Choose Icon</label>
@@ -223,7 +225,7 @@ export default function SubjectsListPage() {
                   {Object.keys(iconComponents).map((iconName) => (
                     <button
                       key={iconName}
-                      className={`p-3 rounded-lg flex items-center justify-center transition-all ${
+                      className={`p-3 rounded-lfull flex items-center justify-center transition-all ${
                         selectedIcon === iconName 
                           ? 'bg-blue-100 text-blue-600 ring-2 ring-blue-500' 
                           : isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'
@@ -254,7 +256,7 @@ export default function SubjectsListPage() {
               
               <div className="flex justify-end gap-3 p-5 border-t border-gray-200">
                 <button
-                  className={`px-4 py-2 rounded-lg transition-all ${
+                  className={`px-4 py-2 rounded-full transition-all ${
                     isDarkMode 
                       ? 'bg-gray-700 hover:bg-gray-600 text-white' 
                       : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
@@ -264,13 +266,13 @@ export default function SubjectsListPage() {
                   Cancel
                 </button>
                 <button
-                  className={`px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center gap-2 hover:bg-blue-600 transition-all ${
+                  className={`px-4 py-2 bg-purple-500 text-white rounded-full flex items-center gap-2 hover:bg-purple-600 transition-all ${
                     !newSubject.trim() ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                   onClick={handleAddSubject}
                   disabled={!newSubject.trim()}
                 >
-                  <Plus size={18} />
+
                   Add Subject
                 </button>
               </div>

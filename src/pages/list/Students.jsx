@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Pagination from "@/components/Pagination";
@@ -13,7 +12,8 @@ const dummyStudents = [
     name: "Alice Johnson",
     email: "alice.johnson@example.com",
     img: "/avatar.png",
-    subjects: [{ name: "History" }, { name: "Geography" }],
+    gender: "Female",
+    dateofAdmission: "2023-08-15",
     classes: [{ name: "Grade 10" }],
     phone: "111-222-3333",
     address: "12 Maple Lane",
@@ -23,7 +23,8 @@ const dummyStudents = [
     name: "Bob Martinez",
     email: "bob.martinez@example.com",
     img: "/avatar.png",
-    subjects: [{ name: "Biology" }],
+    gender: "Male",
+    dateofAdmission: "2022-09-01",
     classes: [{ name: "Grade 11" }],
     phone: "444-555-6666",
     address: "89 Birch Street",
@@ -33,10 +34,10 @@ const dummyStudents = [
 const columns = [
   { header: "Info", accessor: "info" },
   { header: "Student ID", accessor: "studentId", className: "hidden md:table-cell" },
-  { header: "Subjects", accessor: "subjects", className: "hidden md:table-cell" },
-  { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
+  { header: "Gender", accessor: "gender", className: "hidden md:table-cell" },
+  { header: "Class", accessor: "class", className: "hidden md:table-cell" },
   { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
-  { header: "Address", accessor: "address", className: "hidden lg:table-cell" },
+  { header: "Date of Admission", accessor: "dateofAdmission", className: "hidden lg:table-cell" },
   { header: "Actions", accessor: "action" },
 ];
 
@@ -59,14 +60,10 @@ const renderRow = (item) => (
       </div>
     </td>
     <td className="hidden md:table-cell">{item.id}</td>
-    <td className="hidden md:table-cell">
-      {item.subjects.map((s) => s.name).join(", ")}
-    </td>
-    <td className="hidden md:table-cell">
-      {item.classes.map((c) => c.name).join(", ")}
-    </td>
+    <td className="hidden md:table-cell">{item.gender}</td>
+    <td className="hidden md:table-cell">{item.classes.map((c) => c.name).join(", ")}</td>
     <td className="hidden lg:table-cell">{item.phone}</td>
-    <td className="hidden lg:table-cell">{item.address}</td>
+    <td className="hidden lg:table-cell">{item.dateofAdmission}</td>
     <td>
       <Actions />
     </td>

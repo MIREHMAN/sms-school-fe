@@ -13,6 +13,12 @@ import SubjectsListPage from "./list/Subjects";
 import ParentListPage from "./list/Parents";
 import ClassesListPage from "./list/Classes";
 import LessonsListPage from "./list/Lessons";
+import ExamsListPage from "./list/Exams";
+import AssignmentsListPage from "@/pages/list/Assingments";
+import ResultListPage from "./list/Results";
+import AttendanceListPage from "@/pages/list/Attandence"
+import AnnouncementsListPage from "@/pages/list/Announcements"
+
 
 
 
@@ -27,13 +33,13 @@ export function Router() {
         <Route path={ROUTES.subjects} element={<SubjectsListPage />} />
         <Route path={ROUTES.classes} element={<ClassesListPage />} />
         <Route path={ROUTES.lessons} element={<LessonsListPage/>} />
-        <Route path={ROUTES.exams} element={<ParentListPage />} />
-        <Route path={ROUTES.assignments} element={<ParentListPage />} />
-        <Route path={ROUTES.results} element={<ParentListPage />} />
-        <Route path={ROUTES.attendance} element={<ParentListPage />} />
+        <Route path={ROUTES.exams} element={<ExamsListPage />} />
+        <Route path={ROUTES.assignments} element={<AssignmentsListPage />} />
+        <Route path={ROUTES.results} element={<ResultListPage />} />
+        <Route path={ROUTES.attendance} element={<AttendanceListPage />} />
         <Route path={ROUTES.events} element={<ParentListPage />} />
         <Route path={ROUTES.messages} element={<ParentListPage />} />
-        <Route path={ROUTES.announcements} element={<ParentListPage />} />
+        <Route path={ROUTES.announcements} element={<AnnouncementsListPage />} />
      
       </Route>
     </Routes>

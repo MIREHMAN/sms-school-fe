@@ -1,38 +1,47 @@
 import { Route, Routes } from "react-router-dom";
-
-// Routes URLs
 import { ROUTES } from "../constants/routes";
 
 // Components
-
 import Home from "./Home";
-import DashboardLayout from "./Layout";
-import TeacherListPage from "./list/Teachers";
-import StudentListPage from "./list/Students";
-import SubjectsListPage from "./list/Subjects";
-import ParentListPage from "./list/Parents";
-import ClassesListPage from "./list/Classes";
-import LessonsListPage from "./list/Lessons";
-import ExamsListPage from "./list/Exams";
+import DashboardLayout from "@/pages/Layout";
+import TeacherListPage from "@/pages/list/Teachers";
+import StudentListPage from "@/pages/list/Students";
+import SubjectsListPage from "@/pages/list/Subjects";
+import ParentListPage from "@/pages/list/Parents";
+import ClassesListPage from "@/pages/list/Classes";
+import LessonsListPage from "@/pages/list/Lessons";
+import ExamsListPage from "@/pages/list//Exams";
 import AssignmentsListPage from "@/pages/list/Assingments";
-import ResultListPage from "./list/Results";
-import AttendanceListPage from "@/pages/list/Attandence"
-import AnnouncementsListPage from "@/pages/list/Announcements"
+import ResultListPage from "@/pages/list/Results";
+import AttendanceListPage from "@/pages/list/Attandence";
+import AnnouncementsListPage from "@/pages/list/Announcements";
 
+// Dashboard Components
+import AdminDashboard from "@/pages/dashboards/AdminDashboard";
+import TeacherDashboard from "@/pages/dashboards/TeacherDashboard";
+import StudentDashboard from "@/pages/dashboards/StudentDashboard";
+import ParentDashboard from "@/pages/dashboards/ParentDashboard";
 
-
+// Login Component
+import LoginPage from "@/pages/LoginPage";
 
 export function Router() {
   return (
     <Routes>
-      <Route path="/" element={<DashboardLayout />}>
+      {/* Login Route (outside the dashboard layout) */}
+      <Route path="/login" element={<LoginPage />} />
+      
+      {/* Main Dashboard Routes */}
+      <Route path="/" element={<DashboardLayout  />}>
         <Route index element={<Home />} />
+        
+        {/* Admin Management Routes */}
         <Route path={ROUTES.teachers} element={<TeacherListPage />} />
         <Route path={ROUTES.students} element={<StudentListPage />} />
         <Route path={ROUTES.parents} element={<ParentListPage />} />
         <Route path={ROUTES.subjects} element={<SubjectsListPage />} />
         <Route path={ROUTES.classes} element={<ClassesListPage />} />
-        <Route path={ROUTES.lessons} element={<LessonsListPage/>} />
+        <Route path={ROUTES.lessons} element={<LessonsListPage />} />
         <Route path={ROUTES.exams} element={<ExamsListPage />} />
         <Route path={ROUTES.assignments} element={<AssignmentsListPage />} />
         <Route path={ROUTES.results} element={<ResultListPage />} />
@@ -40,8 +49,19 @@ export function Router() {
         <Route path={ROUTES.events} element={<ParentListPage />} />
         <Route path={ROUTES.messages} element={<ParentListPage />} />
         <Route path={ROUTES.announcements} element={<AnnouncementsListPage />} />
-     
+        
+        {/* Role-specific Dashboard Routes */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/teacher" element={<TeacherDashboard />} />
+        <Route path="/student" element={<StudentDashboard />} />
+        <Route path="/parent" element={<ParentDashboard />} />
       </Route>
+
+      {/* Redirect to login for root path */}
+      <Route path="/" element={<LoginPage />} index />
+      
+      {/* Fallback to login for unknown routes */}
+      <Route path="*" element={<LoginPage />} />
     </Routes>
   );
 }

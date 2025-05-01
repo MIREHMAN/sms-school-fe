@@ -17,6 +17,7 @@ export const ROUTES = Object.freeze({
   messages: "/list/messages",
   announcements: "/list/announcements",
 
+
   // Detail (single) pages
   teacherDetail: "/teacher/:id",
   studentDetail: "/student/:id",

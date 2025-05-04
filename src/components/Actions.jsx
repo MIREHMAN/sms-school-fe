@@ -1,12 +1,17 @@
 import React from "react";
 import { Eye, Pencil, Trash } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const Actions = () => {
+const Actions = ({ item, item_id }) => {
   return (
     <div className="flex items-center gap-2">
-      <button className="p-2 rounded hover:bg-gray-100" title="View">
+      <Link
+        to={`/${item}/${item_id}`}
+        className="p-2 rounded hover:bg-gray-100"
+        title="View"
+      >
         <Eye size={16} />
-      </button>
+      </Link>
       <button className="p-2 rounded hover:bg-gray-100" title="Edit">
         <Pencil size={16} />
       </button>

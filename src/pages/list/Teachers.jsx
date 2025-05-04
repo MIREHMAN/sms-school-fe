@@ -53,7 +53,7 @@ const renderRow = (item) => (
         className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
       />
       <div className="flex flex-col">
-        <h3 className="font-semibold">{item.name}</h3>
+        <Link to={`/teachers/${item.id}`}><h3 className="font-semibold hover:text-blue-600 cursor-pointer">{item.name}</h3></Link>
         <p className="text-xs text-gray-500">{item.email}</p>
       </div>
     </td>
@@ -67,7 +67,7 @@ const renderRow = (item) => (
     <td className="hidden lg:table-cell">{item.phone}</td>
     <td className="hidden lg:table-cell">{item.address}</td>
     <td>
-    <Actions />
+    <Actions item="teachers" item_id={item.id} />
     </td>
   </tr>
 );

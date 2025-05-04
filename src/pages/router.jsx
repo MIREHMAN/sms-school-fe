@@ -16,26 +16,29 @@ import ResultListPage from "@/pages/list/Results";
 import AttendanceListPage from "@/pages/list/Attandence";
 import AnnouncementsListPage from "@/pages/list/Announcements";
 
-// Dashboard Components
+// Single Service Pages
+
+
+// Dashboards
 import AdminDashboard from "@/pages/dashboards/AdminDashboard";
 import TeacherDashboard from "@/pages/dashboards/TeacherDashboard";
 import StudentDashboard from "@/pages/dashboards/StudentDashboard";
 import ParentDashboard from "@/pages/dashboards/ParentDashboard";
 
-// Login Component
+// Login
 import LoginPage from "@/pages/LoginPage";
+import SingleTeacherPage from "./singlePages/SingleTeacherPage";
+import SingleStudentPage from "./singlePages/SingleStudentPage";
 
 export function Router() {
   return (
     <Routes>
-      {/* Login Route (outside the dashboard layout) */}
       <Route path="/login" element={<LoginPage />} />
       
-      {/* Main Dashboard Routes */}
-      <Route path="/" element={<DashboardLayout  />}>
+      <Route path="/" element={<DashboardLayout />}>
         <Route index element={<Home />} />
-        
-        {/* Admin Management Routes */}
+
+        {/* List Routes */}
         <Route path={ROUTES.teachers} element={<TeacherListPage />} />
         <Route path={ROUTES.students} element={<StudentListPage />} />
         <Route path={ROUTES.parents} element={<ParentListPage />} />
@@ -46,21 +49,22 @@ export function Router() {
         <Route path={ROUTES.assignments} element={<AssignmentsListPage />} />
         <Route path={ROUTES.results} element={<ResultListPage />} />
         <Route path={ROUTES.attendance} element={<AttendanceListPage />} />
-        <Route path={ROUTES.events} element={<ParentListPage />} />
-        <Route path={ROUTES.messages} element={<ParentListPage />} />
         <Route path={ROUTES.announcements} element={<AnnouncementsListPage />} />
-        
-        {/* Role-specific Dashboard Routes */}
+
+        {/* Single Service Routes */}
+        <Route path="/teachers/:id" element={<SingleTeacherPage />} />
+        <Route path="/students/:id" element={<SingleStudentPage />} />
+     
+
+        {/* Dashboards */}
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/teacher" element={<TeacherDashboard />} />
         <Route path="/student" element={<StudentDashboard />} />
         <Route path="/parent" element={<ParentDashboard />} />
       </Route>
 
-      {/* Redirect to login for root path */}
+      {/* Fallbacks */}
       <Route path="/" element={<LoginPage />} index />
-      
-      {/* Fallback to login for unknown routes */}
       <Route path="*" element={<LoginPage />} />
     </Routes>
   );

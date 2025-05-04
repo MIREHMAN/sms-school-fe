@@ -65,7 +65,7 @@ const renderRow = (item) => (
     <td className="hidden lg:table-cell">{item.phone}</td>
     <td className="hidden lg:table-cell">{item.dateofAdmission}</td>
     <td>
-      <Actions />
+    <Actions item="students" item_id={item.id} />
     </td>
   </tr>
 );

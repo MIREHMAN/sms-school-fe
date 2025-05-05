@@ -53,6 +53,7 @@ const renderRow = (item) => (
         className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
       />
       <div className="flex flex-col">
+       
         <Link to={`/teachers/${item.id}`}><h3 className="font-semibold hover:text-blue-600 cursor-pointer">{item.name}</h3></Link>
         <p className="text-xs text-gray-500">{item.email}</p>
       </div>

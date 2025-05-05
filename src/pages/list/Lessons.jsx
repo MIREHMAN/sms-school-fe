@@ -19,8 +19,10 @@ import {
   Search,
   LayoutGrid,
   List,
-  X
+  X,
+  Table
 } from "lucide-react";
+import TableSearch from "@/components/TableSearch";
 
 const LessonsListPage = () => {
   const [expandedSection, setExpandedSection] = useState(null);
@@ -475,7 +477,8 @@ const LessonsListPage = () => {
         <div className="bg-white shadow-sm rounded-xl p-4 mb-6">
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             {/* Search */}
-            <div className="relative flex-grow">
+            <TableSearch/>
+            {/* <div className="relative flex-grow">
               <input
                 type="text"
                 className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full transition-all"
@@ -484,14 +487,14 @@ const LessonsListPage = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <Search className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
-            </div>
+            </div> */}
             
             {/* Category filter */}
             <div className="flex space-x-2 overflow-x-auto pb-1 flex-nowrap">
               <button
                 className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap ${
                   selectedFilter === 'All' 
-                    ? 'bg-blue-100 text-blue-600 font-medium'
+                    ? 'bg-purple-100 text-purple-600 font-medium'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
                 onClick={() => setSelectedFilter('All')}
@@ -502,34 +505,14 @@ const LessonsListPage = () => {
                 let icon;
                 let color;
                 
-                switch(category) {
-                  case 'Humanities': 
-                    icon = <Book size={16} />;
-                    color = 'text-pink-600';
-                    break;
-                  case 'Programming': 
-                    icon = <Code size={16} />;
-                    color = 'text-emerald-600';
-                    break;
-                  case 'Economics': 
-                    icon = <DollarSign size={16} />;
-                    color = 'text-violet-600';
-                    break;
-                  case 'English Grammar': 
-                    icon = <BookOpen size={16} />;
-                    color = 'text-red-600';
-                    break;
-                  default: 
-                    icon = <Book size={16} />;
-                    color = 'text-blue-600';
-                }
+              
                 
                 return (
                   <button
                     key={category}
                     className={`px-3 py-1.5 rounded-lg text-sm flex items-center whitespace-nowrap ${
                       selectedFilter === category
-                        ? 'bg-blue-100 text-blue-600 font-medium'
+                        ? 'bg-purple-100 text-purple-600 font-medium'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                     onClick={() => setSelectedFilter(category)}
@@ -543,7 +526,7 @@ const LessonsListPage = () => {
             
             {/* Add button */}
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm whitespace-nowrap"
+             className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm"
               onClick={() => setShowModal(true)}
             >
               <Plus size={18} />

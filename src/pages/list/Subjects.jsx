@@ -65,7 +65,7 @@ export default function SubjectsListPage() {
           <div>
             <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} transition-all duration-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
               Subjects
-              <div className={`h-1 w-32 bg-purple-500 mt-2 rounded-full transform transition-all duration-700 ${isLoaded ? 'scale-x-100' : 'scale-x-0'}`}></div>
+              {/* <div className={`h-1 w-32 bg-purple-500 mt-2 rounded-full transform transition-all duration-700 ${isLoaded ? 'scale-x-100' : 'scale-x-0'}`}></div> */}
             </h1>
             <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-500'} transition-all duration-500 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               Manage your educational subjects

@@ -109,7 +109,7 @@ export default function ModernResultsPage() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-8xl mx-auto p-6">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

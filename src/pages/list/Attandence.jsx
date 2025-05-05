@@ -51,7 +51,7 @@ const AttendanceListPage = () => {
   const [searchFocused, setSearchFocused] = useState(false);
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-white rounded-xl shadow-sm">
+    <div className="w-full mx-auto p-6 bg-white rounded-xl shadow-sm">
       {/* Header section */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
         <div className="flex items-center gap-2">

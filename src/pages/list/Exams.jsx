@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Award, Plus, X, ChevronRight, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TableSearch from '@/components/TableSearch';
 
 export default function ExamsPage() {
   const [exams, setExams] = useState([
@@ -96,24 +97,14 @@ export default function ExamsPage() {
         >
           <h1 className="text-3xl font-bold text-gray-800">Upcoming Exams</h1>
           <div className="flex gap-2">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`p-2 rounded-full ${filterActive ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-              onClick={handleFilterClick}
-            >
-              <Calendar size={20} />
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              animate={animateButton ? { scale: [1, 1.2, 1] } : {}}
-              className="bg-indigo-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-md"
+            <TableSearch/>
+            <button
+              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm"
               onClick={() => setShowModal(true)}
             >
               <Plus size={20} />
               <span className="hidden md:inline">Add Exam</span>
-            </motion.button>
+            </button>
           </div>
         </motion.div>
 
@@ -316,14 +307,13 @@ export default function ExamsPage() {
                     >
                       Cancel
                     </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-medium shadow-sm"
+                    <button
+                     
+                     className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm"
                       onClick={handleAddExam}
                     >
                       Save Exam
-                    </motion.button>
+                    </button>
                   </div>
                 </div>
               </motion.div>

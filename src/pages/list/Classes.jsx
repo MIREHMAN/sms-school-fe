@@ -206,7 +206,7 @@ export default function ClassesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -215,7 +215,7 @@ export default function ClassesPage() {
             <p className="text-gray-500 mt-1">Manage your classroom structure</p>
           </div>
           
-          <div className="flex space-x-2">
+          {/* <div className="flex space-x-2">
             <button
               onClick={() => setSelectedLayout('grid')}
               className={`p-2 rounded-md ${selectedLayout === 'grid' ? 'bg-gray-200' : 'bg-gray-100'}`}
@@ -240,12 +240,12 @@ export default function ClassesPage() {
                 <line x1="3" y1="18" x2="3.01" y2="18" />
               </svg>
             </button>
-          </div>
+          </div> */}
         </div>
         
         {/* Search and filter */}
-        <div className="bg-white shadow-sm rounded-xl p-4 mb-6">
-          <div className="flex flex-col sm:flex-row justify-between gap-4">
+        {/* <div className="bg-white shadow-sm rounded-xl p-4 mb-6"> */}
+          <div className="flex flex-col sm:flex-row justify-end gap-4">
             {/* Search */}
             <TableSearch/>
             {/* <div className="relative flex-grow">
@@ -261,7 +261,7 @@ export default function ClassesPage() {
               </svg>
             </div> */}
             
-            {/* Category filter */}
+            {/* Category filter
             <div className="flex space-x-2 overflow-x-auto pb-1 flex-nowrap">
               <button
                 className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap ${
@@ -287,7 +287,7 @@ export default function ClassesPage() {
                   <span className="ml-1">{category}</span>
                 </button>
               ))}
-            </div>
+            </div> */}
             
             {/* Add button */}
             <button
@@ -297,22 +297,22 @@ export default function ClassesPage() {
               <Plus size={18} />
               <span>Add Class</span>
             </button>
-          </div>
+          {/* </div> */}
         </div>
 
         {/* Class count summary */}
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center my-4">
           <div className="text-sm text-gray-500">
             Showing <span className="font-medium">{filteredClasses.length}</span> of <span className="font-medium">{classes.length}</span> classes
           </div>
           
           <div className="text-sm">
-            <span className="text-gray-500">Sort by: </span>
+            {/* <span className="text-gray-500">Sort by: </span>
             <select className="border-none bg-transparent text-gray-800 font-medium focus:outline-none focus:ring-0">
               <option>Newest first</option>
               <option>Name (A-Z)</option>
               <option>Students (high-low)</option>
-            </select>
+            </select> */}
           </div>
         </div>
 

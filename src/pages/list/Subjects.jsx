@@ -1,50 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  Plus, X, Book, ChevronRight, BookOpen, Check,
+  Trash2, Edit, Award, Calculator, Globe,
+  Microscope, FlaskRound as Flask, Binary, Atom, Map, PenTool
+} from 'lucide-react';
 import TableSearch from '@/components/TableSearch';
-import SubjectCard from '@/components/SubjectPage/Components/SubjectCard';
-import AddSubjectModal from '@/components/SubjectPage/Components/AddSubjectModal';
-import { iconComponents, colorOptions } from '@/components/SubjectPage/Utils/subjectUtils'
-import { Book } from 'lucide-react';
-import IconComponent from '@/components/SubjectPage/Components/IconComponent';
+import FilterButton from '@/components/FilterButton';
 
 export default function SubjectsListPage() {
-  const [subjects, setSubjects] = useState([
-    { name: 'Mathematics', icon: 'Calculator', color: 'bg-blue-100 text-blue-600' },
-    { name: 'English', icon: 'BookOpen', color: 'bg-green-100 text-green-600' },
-    { name: 'History', icon: 'Book', color: 'bg-amber-100 text-amber-600' },
-    { name: 'Biology', icon: 'Microscope', color: 'bg-emerald-100 text-emerald-600' },
-    { name: 'Chemistry', icon: 'Flask', color: 'bg-purple-100 text-purple-600' },
-    { name: 'Computer Science', icon: 'Binary', color: 'bg-indigo-100 text-indigo-600' },
-    { name: 'Physics', icon: 'Atom', color: 'bg-red-100 text-red-600' },
-    { name: 'Geography', icon: 'Map', color: 'bg-teal-100 text-teal-600' },
-  ]);
-
+  const [subjects, setSubjects] = useState([]); 
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [newSubject, setNewSubject] = useState('');
   const [selectedIcon, setSelectedIcon] = useState('Book');
   const [selectedColor, setSelectedColor] = useState('bg-blue-100 text-blue-600');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
+  const iconComponents = {
+    Book, BookOpen, Calculator, Globe, Microscope,
+    Flask, Binary, Atom, Map, PenTool, Award
+  };
+
+  const colorOptions = [
+    'bg-blue-100 text-blue-600',
+    'bg-green-100 text-green-600',
+    'bg-amber-100 text-amber-600',
+    'bg-emerald-100 text-emerald-600',
+    'bg-purple-100 text-purple-600',
+    'bg-indigo-100 text-indigo-600',
+    'bg-red-100 text-red-600',
+    'bg-teal-100 text-teal-600',
+    'bg-pink-100 text-pink-600',
+  ];
+
   useEffect(() => {
-    setIsLoaded(true);
+    // Simulated API call
+    const fetchSubjects = async () => {
+      setLoading(true);
+      try {
+        const mockData = [
+          { name: 'Mathematics', icon: 'Calculator', color: 'bg-blue-100 text-blue-600' },
+          { name: 'English', icon: 'BookOpen', color: 'bg-green-100 text-green-600' },
+          { name: 'History', icon: 'Book', color: 'bg-amber-100 text-amber-600' },
+          { name: 'Biology', icon: 'Microscope', color: 'bg-emerald-100 text-emerald-600' },
+          { name: 'Chemistry', icon: 'Flask', color: 'bg-purple-100 text-purple-600' },
+          { name: 'Computer Science', icon: 'Binary', color: 'bg-indigo-100 text-indigo-600' },
+          { name: 'Physics', icon: 'Atom', color: 'bg-red-100 text-red-600' },
+          { name: 'Geography', icon: 'Map', color: 'bg-teal-100 text-teal-600' },
+        ];
+        await new Promise((res) => setTimeout(res, 500)); // Simulate delay
+        setSubjects(mockData);
+      } catch (err) {
+        console.error('Failed to fetch subjects', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubjects();
   }, []);
 
   const handleAddSubject = () => {
     if (newSubject.trim()) {
-      setSubjects([...subjects, { name: newSubject, icon: selectedIcon, color: selectedColor }]);
+      setSubjects(prev => [
+        ...prev,
+        {
+          name: newSubject,
+          icon: selectedIcon,
+          color: selectedColor,
+        },
+      ]);
       setNewSubject('');
       setSelectedIcon('Book');
+      setSelectedColor('bg-blue-100 text-blue-600');
       setShowModal(false);
     }
   };
 
   const confirmDelete = (index) => {
     if (deleteConfirm === index) {
-      const newSubjects = [...subjects];
-      newSubjects.splice(index, 1);
-      setSubjects(newSubjects);
+      const updated = [...subjects];
+      updated.splice(index, 1);
+      setSubjects(updated);
       setDeleteConfirm(null);
     } else {
       setDeleteConfirm(index);
@@ -52,40 +90,41 @@ export default function SubjectsListPage() {
     }
   };
 
-  const filteredSubjects = subjects.filter(subject => 
+  const filteredSubjects = subjects.filter(subject =>
     subject.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
+  const IconComponent = ({ iconName, size = 24 }) => {
+    const Icon = iconComponents[iconName] || Book;
+    return <Icon size={size} />;
+  };
 
-        {/* Top Header */}
+  return (
+    <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} transition-all duration-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-              Subjects
-              {/* <div className={`h-1 w-32 bg-purple-500 mt-2 rounded-full transform transition-all duration-700 ${isLoaded ? 'scale-x-100' : 'scale-x-0'}`}></div> */}
-            </h1>
-            <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-500'} transition-all duration-500 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-              Manage your educational subjects
-            </p>
+            <h1 className="hidden md:block text-3xl font-bold text-gray-800">Subjects</h1>
+            <p className="text-sm mt-2 text-gray-500">Manage your educational subjects</p>
           </div>
 
           <div className="flex items-center gap-4 w-full sm:w-auto">
-            <TableSearch />
+            <TableSearch value={searchTerm} onChange={setSearchTerm} />
             <button
-              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm hover:shadow transition-all duration-300 transform hover:scale-105"
+              className="bg-purple-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm"
               onClick={() => setShowModal(true)}
             >
-              Add Subject
+              <Plus size={19} className="lg:hidden" />
+              <span className="hidden sm:inline text-sm">Add Subject</span>
             </button>
+            <FilterButton />
           </div>
         </div>
 
-        {/* Subject Cards */}
-        {filteredSubjects.length === 0 ? (
-          <div className="text-center py-16 animate-fadeIn">
+        {loading ? (
+          <div className="text-center py-16 text-gray-500">Loading subjects...</div>
+        ) : filteredSubjects.length === 0 ? (
+          <div className="text-center py-16 text-gray-500">
             <Book size={48} className="mx-auto mb-4 opacity-40" />
             <p className="text-xl font-medium">No subjects found</p>
             <p className="mt-2">Try adjusting your search or add a new subject</p>
@@ -93,35 +132,117 @@ export default function SubjectsListPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredSubjects.map((subject, index) => (
-              <SubjectCard
-                key={index}
-                subject={subject}
-                index={index}
-                isLoaded={isLoaded}
-                isDarkMode={isDarkMode}
-                confirmDelete={confirmDelete}
-                deleteConfirm={deleteConfirm}
-              />
+              <div key={index} className="relative rounded-xl overflow-hidden group bg-white hover:shadow-lg">
+                <div className={`absolute inset-x-0 top-0 h-1 ${subject.color.split(' ')[0]}`} />
+                <div className="p-6">
+                  <div className={`w-16 h-16 ${subject.color} rounded-lg flex items-center justify-center mb-4 mx-auto`}>
+                    <IconComponent iconName={subject.icon} />
+                  </div>
+                  <div className="text-lg font-semibold text-center mb-2 text-gray-800">
+                    {subject.name}
+                  </div>
+                  <div className="flex justify-center mt-4 space-x-2 opacity-0 group-hover:opacity-100">
+                    <button
+                      className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
+                      onClick={() => confirmDelete(index)}
+                    >
+                      {deleteConfirm === index ? (
+                        <Check size={16} className="text-red-500" />
+                      ) : (
+                        <Trash2 size={16} className="text-gray-500" />
+                      )}
+                    </button>
+                    <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
+                      <Edit size={16} className="text-gray-500" />
+                    </button>
+                  </div>
+                </div>
+                <div className="w-full py-3 px-4 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-blue-50">
+                  <span className="text-sm font-medium">View Details</span>
+                  <ChevronRight size={16} className="text-blue-500" />
+                </div>
+              </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Add Subject Modal */}
       {showModal && (
-        <AddSubjectModal
-          newSubject={newSubject}
-          setNewSubject={setNewSubject}
-          selectedIcon={selectedIcon}
-          setSelectedIcon={setSelectedIcon}
-          selectedColor={selectedColor}
-          setSelectedColor={setSelectedColor}
-          handleAddSubject={handleAddSubject}
-          setShowModal={setShowModal}
-          isDarkMode={isDarkMode}
-          iconComponents={iconComponents}
-          colorOptions={colorOptions}
-        />
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setShowModal(false)} />
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-center p-5 border-b border-gray-200">
+                <h2 className="text-xl font-bold">Add New Subject</h2>
+                <button className="p-1 rounded-full hover:bg-gray-100" onClick={() => setShowModal(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="p-5">
+                <label className="block mb-2 text-sm font-medium">Subject Name</label>
+                <input
+                  type="text"
+                  className="outline-none w-full border p-3 rounded-lg mb-4 border-gray-300 focus:border-purple-500"
+                  placeholder="Enter subject name"
+                  value={newSubject}
+                  onChange={(e) => setNewSubject(e.target.value)}
+                />
+
+                <label className="block mb-2 text-sm font-medium">Choose Icon</label>
+                <div className="grid grid-cols-6 gap-2 mb-4">
+                  {Object.keys(iconComponents).map((iconName) => (
+                    <button
+                      key={iconName}
+                      className={`p-3 rounded-full flex items-center justify-center ${
+                        selectedIcon === iconName
+                          ? 'bg-blue-100 text-blue-600 ring-2 ring-blue-500'
+                          : 'bg-gray-100 hover:bg-gray-200'
+                      }`}
+                      onClick={() => setSelectedIcon(iconName)}
+                    >
+                      <IconComponent iconName={iconName} size={20} />
+                    </button>
+                  ))}
+                </div>
+
+                <label className="block mb-2 text-sm font-medium">Choose Color</label>
+                <div className="grid grid-cols-6 gap-2 mb-6">
+                  {colorOptions.map((color) => {
+                    const [bgColor, textColor] = color.split(' ');
+                    return (
+                      <button
+                        key={color}
+                        className={`h-10 rounded-lg ${bgColor} ${textColor} ${
+                          selectedColor === color ? 'ring-2 ring-blue-500' : ''
+                        }`}
+                        onClick={() => setSelectedColor(color)}
+                      ></button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 p-5 border-t border-gray-200">
+                <button
+                  className="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className={`px-4 py-2 bg-purple-500 text-white rounded-full flex items-center gap-2 hover:bg-purple-600 ${
+                    !newSubject.trim() ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  onClick={handleAddSubject}
+                  disabled={!newSubject.trim()}
+                >
+                  Add Subject
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

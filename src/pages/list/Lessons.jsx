@@ -1,7 +1,6 @@
 // ModernLessonPlans.jsx
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { 
   Book, 
   Code, 
@@ -23,6 +22,7 @@ import {
   Table
 } from "lucide-react";
 import TableSearch from "@/components/TableSearch";
+import PageHeader from "@/components/PageHeader";
 
 const LessonsListPage = () => {
   const [expandedSection, setExpandedSection] = useState(null);
@@ -203,30 +203,13 @@ const LessonsListPage = () => {
     return colorMap[color] || colorMap.blue;
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 }
-  };
-
   const renderLessonCard = (lesson, index) => {
     const colorClasses = getColorClasses(lesson.color);
     const progress = Math.floor(Math.random() * 30) + 50; // Random progress between 50-80%
     
     return (
-      <motion.div
+      <div
         key={lesson.id}
-        variants={itemVariants}
-        whileHover={{ scale: 1.01 }}
         className="relative rounded-xl p-0 bg-white shadow-sm group border transition-all hover:shadow-md overflow-hidden"
       >
         {/* Top accent bar */}
@@ -274,19 +257,18 @@ const LessonsListPage = () => {
               className={`${colorClasses.bg} ${colorClasses.text} text-sm font-medium px-3 py-1 rounded-lg flex items-center group-hover:bg-opacity-100 transition-all`} 
               onClick={() => toggleSection(index)}
             >
-              View <ChevronRight size={14} className="ml-1 transform group-hover:translate-x-1 transition-transform" />
+              View <ChevronRight size={14} className="ml-1 transition-transform" />
             </button>
           </div>
         </div>
         
         {/* Expanded content */}
-        <motion.div 
-          initial={false}
-          animate={{ 
+        <div 
+          style={{
             height: expandedSection === index ? "auto" : 0,
-            opacity: expandedSection === index ? 1 : 0
+            opacity: expandedSection === index ? 1 : 0,
+            transition: 'all 0.3s ease-in-out'
           }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
           className="overflow-hidden border-t border-gray-100"
         >
           <div className="p-5 space-y-4 bg-gray-50">
@@ -305,16 +287,13 @@ const LessonsListPage = () => {
                   <h3 className="font-semibold text-gray-700">Topics</h3>
                   <ul className="mt-1 space-y-1">
                     {lesson.topics.map((topic, i) => (
-                      <motion.li 
+                      <li 
                         key={i}
                         className="flex items-center gap-2 text-gray-600"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
                       >
                         <span className={`block w-1 h-1 rounded-full ${colorClasses.progress}`}></span>
                         {topic}
-                      </motion.li>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -328,16 +307,13 @@ const LessonsListPage = () => {
                   <h3 className="font-semibold text-gray-700">Activities</h3>
                   <ul className="mt-1 space-y-1">
                     {lesson.activities.map((activity, i) => (
-                      <motion.li 
+                      <li 
                         key={i}
                         className="flex items-center gap-2 text-gray-600"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
                       >
                         <span className={`block w-1 h-1 rounded-full ${colorClasses.progress}`}></span>
                         {activity}
-                      </motion.li>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -351,18 +327,16 @@ const LessonsListPage = () => {
                   <h3 className="font-semibold text-gray-700">Videos</h3>
                   <div className="mt-2 grid gap-2">
                     {lesson.videos.map((video, i) => (
-                      <motion.a
+                      <a
                         key={i}
                         href={video.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`${colorClasses.bg} ${colorClasses.text} py-2 px-3 rounded-lg flex items-center gap-2 hover:opacity-90 transition-all`}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
                       >
                         <Video size={16} />
                         <span>{video.name}</span>
-                      </motion.a>
+                      </a>
                     ))}
                   </div>
                 </div>
@@ -376,24 +350,21 @@ const LessonsListPage = () => {
                   <h3 className="font-semibold text-gray-700">Assignments & Assessment</h3>
                   <ul className="mt-1 space-y-1">
                     {lesson.assignments.map((assignment, i) => (
-                      <motion.li 
+                      <li 
                         key={i}
                         className="flex items-center gap-2 text-gray-600"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
                       >
                         <span className={`block w-1 h-1 rounded-full ${colorClasses.progress}`}></span>
                         {assignment}
-                      </motion.li>
+                      </li>
                     ))}
                   </ul>
                 </div>
               </div>
             )}
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     );
   };
 
@@ -448,49 +419,25 @@ const LessonsListPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <PageHeader PageName={"Lessons"} searchValue={searchQuery} onSearchChange={(e) => setSearchQuery(e.target.value)} OnClick={() => setShowModal(true)} />
+        {/* <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">Lesson Plans</h1>
             <p className="text-gray-500 mt-1">Manage your curriculum resources</p>
           </div>
-          
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setSelectedLayout('grid')}
-              className={`p-2 rounded-md ${selectedLayout === 'grid' ? 'bg-gray-200' : 'bg-gray-100'}`}
-            >
-              <LayoutGrid size={18} />
-            </button>
-            <button
-              onClick={() => setSelectedLayout('list')}
-              className={`p-2 rounded-md ${selectedLayout === 'list' ? 'bg-gray-200' : 'bg-gray-100'}`}
-            >
-              <List size={18} />
-            </button>
-          </div>
-        </div>
+        </div> */}
         
         {/* Search and filter */}
-        <div className="bg-white shadow-sm rounded-xl p-4 mb-6">
+        <div>
           <div className="flex flex-col sm:flex-row justify-between gap-4">
-            {/* Search */}
-            <TableSearch/>
-            {/* <div className="relative flex-grow">
-              <input
-                type="text"
-                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full transition-all"
-                placeholder="Search lessons..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Search className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
-            </div> */}
+  
+            {/* <TableSearch/> */}
             
             {/* Category filter */}
-            <div className="flex space-x-2 overflow-x-auto pb-1 flex-nowrap">
+            {/* <div className="flex space-x-2 overflow-x-auto pb-1 flex-nowrap">
               <button
                 className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap ${
                   selectedFilter === 'All' 
@@ -504,8 +451,6 @@ const LessonsListPage = () => {
               {categoryOptions.map(category => {
                 let icon;
                 let color;
-                
-              
                 
                 return (
                   <button
@@ -522,33 +467,33 @@ const LessonsListPage = () => {
                   </button>
                 );
               })}
-            </div>
+            </div> */}
             
             {/* Add button */}
-            <button
+            {/* <button
              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm"
               onClick={() => setShowModal(true)}
             >
               <Plus size={18} />
               <span>Add Lesson</span>
-            </button>
+            </button> */}
           </div>
         </div>
 
         {/* Lesson count summary */}
         <div className="flex justify-between items-center mb-4">
-          <div className="text-sm text-gray-500">
+          {/* <div className="text-sm text-gray-500">
             Showing <span className="font-medium">{filteredLessons.length}</span> of <span className="font-medium">{lessonPlans.length}</span> lessons
-          </div>
+          </div> */}
           
-          <div className="text-sm">
+          {/* <div className="text-sm">
             <span className="text-gray-500">Sort by: </span>
             <select className="border-none bg-transparent text-gray-800 font-medium focus:outline-none focus:ring-0">
               <option>Newest first</option>
               <option>Subject (A-Z)</option>
               <option>Grade level</option>
             </select>
-          </div>
+          </div> */}
         </div>
 
         {/* Cards or List */}
@@ -574,21 +519,16 @@ const LessonsListPage = () => {
                 </button>
               </div>
             ) : (
-              <motion.div 
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-                className={selectedLayout === 'grid' 
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" 
-                  : "space-y-4"
-                }
-              >
+              <div className={selectedLayout === 'grid' 
+                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" 
+                : "space-y-4"
+              }>
                 {filteredLessons.map((lesson, index) => {
                   return selectedLayout === 'grid' 
                     ? renderLessonCard(lesson, index)
                     : renderLessonRow(lesson, index);
                 })}
-              </motion.div>
+              </div>
             )}
           </>
         )}
@@ -601,7 +541,7 @@ const LessonsListPage = () => {
                 <h2 className="text-xl font-bold text-gray-800">Add New Lesson</h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-gray-400 hover:text-gray-600 hover:rotate-90 transition-transform"
+                  className="text-gray-400 hover:text-gray-600"
                 >
                   <X size={20} />
                 </button>
@@ -612,7 +552,7 @@ const LessonsListPage = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Lesson Title</label>
                   <input
                     type="text"
-                    className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
                     placeholder="Enter lesson title (e.g., Advanced Math)"
                     value={newLessonTitle}
                     onChange={(e) => setNewLessonTitle(e.target.value)}
@@ -629,7 +569,7 @@ const LessonsListPage = () => {
                         type="button"
                         className={`px-3 py-1.5 rounded-lg text-sm flex items-center ${
                           newLessonGrade === grade
-                            ? 'bg-blue-100 text-blue-600 border-2 border-blue-300'
+                            ? 'bg-purple-100 text-purple-600 border-2 border-purple-300'
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-2 border-transparent'
                         }`}
                         onClick={() => setNewLessonGrade(grade)}
@@ -642,15 +582,15 @@ const LessonsListPage = () => {
                 </div>
                 
                 <div className="pt-2">
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-100 flex items-start">
-                    <div className="text-blue-500 mt-0.5 mr-2">
+                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-100 flex items-start">
+                    <div className="text-purple-500 mt-0.5 mr-2">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
                       </svg>
                     </div>
-                    <p className="text-sm text-blue-700">
+                    <p className="text-sm text-purple-700">
                       You can add more details like objectives, topics, and resources after creating the lesson.
                     </p>
                   </div>
@@ -665,7 +605,7 @@ const LessonsListPage = () => {
                   Cancel
                 </button>
                 <button
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50 disabled:pointer-events-none"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium transition-colors shadow-sm disabled:opacity-50 disabled:pointer-events-none"
                   onClick={handleAddLesson}
                   disabled={!newLessonTitle.trim()}
                 >
@@ -681,4 +621,3 @@ const LessonsListPage = () => {
 };
 
 export default LessonsListPage;
-

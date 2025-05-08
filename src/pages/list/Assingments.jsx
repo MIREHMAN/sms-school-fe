@@ -14,6 +14,7 @@ import {
   Star
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PageHeader from '@/components/PageHeader';
 
 export default function AssignmentsPage() {
   const [assignments, setAssignments] = useState([
@@ -176,9 +177,10 @@ export default function AssignmentsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="bg-white p-6 rounded-md flex-1 m-4 mt-0">
       <div className="max-w-7xl mx-auto">
-        <motion.div 
+        <PageHeader PageName={"Assingments"} OnClick={() => setShowModal(true)}/>
+        {/* <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -205,7 +207,7 @@ export default function AssignmentsPage() {
               <span className="hidden md:inline">Add Assignment</span>
             </motion.button>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Filters */}
         <AnimatePresence>
@@ -538,14 +540,13 @@ export default function AssignmentsPage() {
                     >
                       Cancel
                     </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-medium shadow-sm"
+                    <button
+
+                      className="px-4 py-2 bg-purple-500 text-white rounded-full font-medium shadow-sm"
                       onClick={handleAddAssignment}
                     >
-                      Save Assignment
-                    </motion.button>
+                      Save
+                    </button>
                   </div>
                 </div>
               </motion.div>

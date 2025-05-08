@@ -12,6 +12,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PageHeader from '@/components/PageHeader';
 
 const resultsData = [
   { id: 1, student: 'Ayesha Khan', grade: '10', subject: 'Math', marks: 92, total: 100, status: 'Pass' },
@@ -114,16 +115,21 @@ export default function ModernResultsPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white rounded-xl shadow-sm p-6 mb-6"
+          className="bg-white p-6 rounded-md flex-1 m-4 mt-0"
         >
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <div >
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Student Results</h1>
-              <p className="text-gray-500 mt-1">View and manage student performance data</p>
+              {/* <h1 className="text-2xl font-bold text-gray-800">Student Results</h1>
+              <p className="text-gray-500 mt-1">View and manage student performance data</p> */}
             </div>
+            <PageHeader PageName={"Results"} 
+            searchValue={searchTerm}
+            onSearchChange={(e)=>{setSearchTerm(e.target.value)}}
+            OnClick={()=>{setIsModalOpen(true)}
+            }/> 
             
             <div className="flex items-center gap-3">
-              <div className="relative">
+              {/* <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
@@ -140,9 +146,9 @@ export default function ModernResultsPage() {
                     <X className="w-4 h-4" />
                   </button>
                 )}
-              </div>
+              </div> */}
               
-              <motion.button 
+              {/* <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm flex items-center transition-all duration-200"
@@ -159,7 +165,7 @@ export default function ModernResultsPage() {
                 className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-3 py-2 rounded-lg shadow-sm flex items-center transition-all duration-200"
               >
                 <a href='/reult.pdf'download><Download className="w-5 h-5" /></a>
-              </motion.button>
+              </motion.button> */}
 
             </div>
           </div>

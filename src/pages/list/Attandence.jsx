@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Users, Calendar, Clock, ChevronDown, Search, PlusCircle, Filter, MoreHorizontal, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
 
 // Mock data
 const attendanceData = [
@@ -51,9 +52,9 @@ const AttendanceListPage = () => {
   const [searchFocused, setSearchFocused] = useState(false);
 
   return (
-    <div className="w-full mx-auto p-6 bg-white rounded-xl shadow-sm">
+    <div className="bg-white p-6 rounded-md flex-1 m-4 mt-0">
       {/* Header section */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+      {/* <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
         <div className="flex items-center gap-2">
           <Users className="text-blue-600" size={24} />
           <h1 className="text-2xl font-bold text-gray-800">Attendance Dashboard</h1>
@@ -79,10 +80,15 @@ const AttendanceListPage = () => {
             <span>Mark Attendance</span>
           </button>
         </div>
-      </div>
+      </div> */}
+                  <PageHeader PageName={"Attendence"} 
+                  // searchValue={searchTerm}
+                  // onSearchChange={(e)=>{setSearchTerm(e.target.value)}}
+                  OnClick={()=>{setIsModalOpen(true)}}
+                  />
 
       {/* Tabs & Filters */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+      {/* <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div className="flex border-b border-gray-200">
           <button 
             className={`px-4 py-2 font-medium text-sm transition-all ${activeTab === 'today' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
@@ -140,13 +146,13 @@ const AttendanceListPage = () => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Date indicator */}
-      <div className="flex items-center gap-2 mb-4 bg-blue-50 p-3 rounded-lg">
+      {/* <div className="flex items-center gap-2 mb-4 bg-blue-50 p-3 rounded-lg">
         <Calendar size={18} className="text-blue-600" />
         <span className="text-sm font-medium text-blue-800">Wednesday, April 30, 2025</span>
-      </div>
+      </div> */}
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">

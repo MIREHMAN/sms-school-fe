@@ -3,6 +3,8 @@ import { Plus, X, BookOpen, ChevronRight, Users, Calendar, Bookmark, Star, Clock
 import TableSearch from '@/components/TableSearch';
 import FilterButton from '@/components/FilterButton';
 import PageHeader from '@/components/PageHeader';
+import { useUser } from '@/context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function ClassesPage() {
   const [classes, setClasses] = useState([
@@ -29,12 +31,20 @@ export default function ClassesPage() {
   const categoryOptions = ['Elementary', 'Middle', 'High', 'Special'];
   const colorOptions = ['blue', 'green', 'purple', 'pink', 'yellow'];
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
+    const { user } = useUser();
+  const navigate = useNavigate();
+
+
+useEffect(() => {
+  if (!user) {
+    navigate('/login');
+  } else {
+    // simulate a brief loading period or fetch data here
+    setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    }, 500); // you can adjust or remove the timeout as needed
+  }
+}, [user]);
 
   const handleAddClass = () => {
     if (newClass.trim()) {

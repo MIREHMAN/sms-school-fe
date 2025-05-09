@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, Calendar, Plus, Search, Filter, ChevronDown, Pin, MoreVertical, MessageSquare, Share2, Eye, Tag, User } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
 
 // Extended mock data
 const announcements = [
@@ -89,7 +90,9 @@ const AnnouncementsListPage = () => {
   return (
     <div className="max-w-8xl mx-auto p-6 bg-white rounded-xl shadow-sm">
       {/* Header section */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+<PageHeader PageName={"Annocements"} />
+
+      {/* <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
         <div className="flex items-center gap-2">
           <Bell className="text-blue-600" size={24} />
           <h1 className="text-2xl font-bold text-gray-800">School Announcements</h1>
@@ -114,10 +117,10 @@ const AnnouncementsListPage = () => {
             <span>Add Announcement</span>
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Tabs & Filters */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+      {/* <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div className="flex border-b border-gray-200">
           <button 
             className={`px-4 py-2 font-medium text-sm transition-all ${activeTab === 'all' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
@@ -176,13 +179,13 @@ const AnnouncementsListPage = () => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Date indicator */}
-      <div className="flex items-center gap-2 mb-4 bg-blue-50 p-3 rounded-lg">
+      {/* <div className="flex items-center gap-2 mb-4 bg-blue-50 p-3 rounded-lg">
         <Calendar size={18} className="text-blue-600" />
         <span className="text-sm font-medium text-blue-800">Wednesday, April 30, 2025</span>
-      </div>
+      </div> */}
 
       {/* Announcements grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">

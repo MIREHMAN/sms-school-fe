@@ -1,6 +1,10 @@
 import React from "react";
+import { useUser } from '@/context/UserContext';
 
 const Navbar = () => {
+
+    const { user } = useUser();
+
   return (
     <div className="flex items-center justify-between p-4">
    
@@ -19,8 +23,8 @@ const Navbar = () => {
         </div>
 
         <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium">M. Shahzad</span>
-          <span className="text-[10px] text-gray-500 text-right">Admin</span>
+          <span className="text-xs leading-3 font-medium">{user?.username}</span>
+          <span className="text-[10px] text-gray-500 text-right">{user?.role}</span>
         </div>
 
         <img

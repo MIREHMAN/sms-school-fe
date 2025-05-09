@@ -1,8 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import { ROUTES } from "../constants/routes";
-
-// Components
-import Home from "./Home";
 import DashboardLayout from "@/pages/Layout";
 import TeacherListPage from "@/pages/list/Teachers";
 import StudentListPage from "@/pages/list/Students";
@@ -15,20 +12,14 @@ import AssignmentsListPage from "@/pages/list/Assingments";
 import ResultListPage from "@/pages/list/Results";
 import AttendanceListPage from "@/pages/list/Attandence";
 import AnnouncementsListPage from "@/pages/list/Announcements";
-
-// Single Service Pages
-
-
-// Dashboards
 import AdminDashboard from "@/pages/dashboards/AdminDashboard";
 import TeacherDashboard from "@/pages/dashboards/TeacherDashboard";
 import StudentDashboard from "@/pages/dashboards/StudentDashboard";
 import ParentDashboard from "@/pages/dashboards/ParentDashboard";
-
-// Login
 import LoginPage from "@/pages/LoginPage";
 import SingleTeacherPage from "./singlePages/SingleTeacherPage";
 import SingleStudentPage from "./singlePages/SingleStudentPage";
+import RoleBasedRedirect from "@/components/RoleBasedRedirect"; // ✅ Import here
 
 export function Router() {
   return (
@@ -36,7 +27,7 @@ export function Router() {
       <Route path="/login" element={<LoginPage />} />
       
       <Route path="/" element={<DashboardLayout />}>
-        <Route index element={<Home />} />
+        <Route index element={<RoleBasedRedirect />} /> {/* ✅ Role-based routing */}
 
         {/* List Routes */}
         <Route path={ROUTES.teachers} element={<TeacherListPage />} />
@@ -54,7 +45,6 @@ export function Router() {
         {/* Single Service Routes */}
         <Route path="/teachers/:id" element={<SingleTeacherPage />} />
         <Route path="/students/:id" element={<SingleStudentPage />} />
-     
 
         {/* Dashboards */}
         <Route path="/admin" element={<AdminDashboard />} />
@@ -63,8 +53,7 @@ export function Router() {
         <Route path="/parent" element={<ParentDashboard />} />
       </Route>
 
-      {/* Fallbacks */}
-      <Route path="/" element={<LoginPage />} index />
+      {/* Fallback */}
       <Route path="*" element={<LoginPage />} />
     </Routes>
   );

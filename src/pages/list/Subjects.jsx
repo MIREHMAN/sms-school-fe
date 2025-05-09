@@ -6,9 +6,11 @@ import {
 } from 'lucide-react';
 import TableSearch from '@/components/TableSearch';
 import FilterButton from '@/components/FilterButton';
+import { useUser } from '@/context/UserContext';
 
 export default function SubjectsListPage() {
-  const [subjects, setSubjects] = useState([]); 
+  const { user } = useUser();
+  const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [newSubject, setNewSubject] = useState('');
@@ -99,6 +101,7 @@ export default function SubjectsListPage() {
     return <Icon size={size} />;
   };
 
+
   return (
     <div className="bg-white p-6 rounded-md flex-1 m-4 mt-0">
       <div className="max-w-7xl mx-auto ">
@@ -110,7 +113,7 @@ export default function SubjectsListPage() {
 
           <div className="flex items-center gap-4 w-full sm:w-auto">
             <TableSearch value={searchTerm} onChange={setSearchTerm} />
-            
+
             <FilterButton />
 
             <button
@@ -143,21 +146,27 @@ export default function SubjectsListPage() {
                   <div className="text-lg font-semibold text-center mb-2 text-gray-800">
                     {subject.name}
                   </div>
-                  <div className="flex justify-center mt-4 space-x-2 opacity-0 group-hover:opacity-100">
-                    <button
-                      className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
-                      onClick={() => confirmDelete(index)}
-                    >
-                      {deleteConfirm === index ? (
-                        <Check size={16} className="text-red-500" />
-                      ) : (
-                        <Trash2 size={16} className="text-gray-500" />
-                      )}
-                    </button>
-                    <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
-                      <Edit size={16} className="text-gray-500" />
-                    </button>
-                  </div>
+
+                  {user?.role === "admin" && (
+
+                    <div className="flex justify-center mt-4 space-x-2 opacity-0 group-hover:opacity-100">
+                      <button
+                        className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
+                        onClick={() => confirmDelete(index)}
+                      >
+                        {deleteConfirm === index ? (
+                          <Check size={16} className="text-red-500" />
+                        ) : (
+                          <Trash2 size={16} className="text-gray-500" />
+                        )}
+                      </button>
+                      <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
+                        <Edit size={16} className="text-gray-500" />
+                      </button>
+                    </div>
+                  )}
+
+
                 </div>
                 <div className="w-full py-3 px-4 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-blue-50">
                   <span className="text-sm font-medium">View Details</span>
@@ -196,11 +205,10 @@ export default function SubjectsListPage() {
                   {Object.keys(iconComponents).map((iconName) => (
                     <button
                       key={iconName}
-                      className={`p-3 rounded-full flex items-center justify-center ${
-                        selectedIcon === iconName
+                      className={`p-3 rounded-full flex items-center justify-center ${selectedIcon === iconName
                           ? 'bg-blue-100 text-blue-600 ring-2 ring-blue-500'
                           : 'bg-gray-100 hover:bg-gray-200'
-                      }`}
+                        }`}
                       onClick={() => setSelectedIcon(iconName)}
                     >
                       <IconComponent iconName={iconName} size={20} />
@@ -215,9 +223,8 @@ export default function SubjectsListPage() {
                     return (
                       <button
                         key={color}
-                        className={`h-10 rounded-lg ${bgColor} ${textColor} ${
-                          selectedColor === color ? 'ring-2 ring-blue-500' : ''
-                        }`}
+                        className={`h-10 rounded-lg ${bgColor} ${textColor} ${selectedColor === color ? 'ring-2 ring-blue-500' : ''
+                          }`}
                         onClick={() => setSelectedColor(color)}
                       ></button>
                     );
@@ -233,9 +240,8 @@ export default function SubjectsListPage() {
                   Cancel
                 </button>
                 <button
-                  className={`px-4 py-2 bg-purple-500 text-white rounded-full flex items-center gap-2 hover:bg-purple-600 ${
-                    !newSubject.trim() ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className={`px-4 py-2 bg-purple-500 text-white rounded-full flex items-center gap-2 hover:bg-purple-600 ${!newSubject.trim() ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   onClick={handleAddSubject}
                   disabled={!newSubject.trim()}
                 >

@@ -17,10 +17,11 @@ export const UserProvider = ({ children }) => {
     setUser(userData);
   };
 
-  const logout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-  };
+const logout = () => {
+  localStorage.removeItem('user');
+  setUser(null);
+  window.location.href = '/'; // Redirect to login page
+};
 
   return (
     <UserContext.Provider value={{ user, login, logout }}>

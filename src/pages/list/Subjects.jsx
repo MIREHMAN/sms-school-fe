@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import {
   Plus, X, Book, ChevronRight, BookOpen, Check,
@@ -18,6 +19,7 @@ export default function SubjectsListPage() {
   const [selectedColor, setSelectedColor] = useState('bg-blue-100 text-blue-600');
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [selectedSubject, setSelectedSubject] = useState(null);
 
   const iconComponents = {
     Book, BookOpen, Calculator, Globe, Microscope,
@@ -37,21 +39,20 @@ export default function SubjectsListPage() {
   ];
 
   useEffect(() => {
-    // Simulated API call
     const fetchSubjects = async () => {
       setLoading(true);
       try {
         const mockData = [
-          { name: 'Mathematics', icon: 'Calculator', color: 'bg-blue-100 text-blue-600' },
-          { name: 'English', icon: 'BookOpen', color: 'bg-green-100 text-green-600' },
-          { name: 'History', icon: 'Book', color: 'bg-amber-100 text-amber-600' },
-          { name: 'Biology', icon: 'Microscope', color: 'bg-emerald-100 text-emerald-600' },
-          { name: 'Chemistry', icon: 'Flask', color: 'bg-purple-100 text-purple-600' },
-          { name: 'Computer Science', icon: 'Binary', color: 'bg-indigo-100 text-indigo-600' },
-          { name: 'Physics', icon: 'Atom', color: 'bg-red-100 text-red-600' },
-          { name: 'Geography', icon: 'Map', color: 'bg-teal-100 text-teal-600' },
+          { name: 'Mathematics', code: 'MATH-101', grade: 'Grade 9', teacher: 'Mr. Ali (0333-1234567)', icon: 'Calculator', color: 'bg-blue-100 text-blue-600' },
+          { name: 'English', code: 'ENG-101', grade: 'Grade 9', teacher: 'Ms. Sara (0345-9876543)', icon: 'BookOpen', color: 'bg-green-100 text-green-600' },
+          { name: 'History', code: 'HIS-101', grade: 'Grade 8', teacher: 'Mr. Khan (0301-1122334)', icon: 'Book', color: 'bg-amber-100 text-amber-600' },
+          { name: 'Biology', code: 'BIO-101', grade: 'Grade 10', teacher: 'Dr. Asma (0302-2233445)', icon: 'Microscope', color: 'bg-emerald-100 text-emerald-600' },
+          { name: 'Chemistry', code: 'CHEM-101', grade: 'Grade 10', teacher: 'Mr. Kamran (0321-5566778)', icon: 'Flask', color: 'bg-purple-100 text-purple-600' },
+          { name: 'Computer Science', code: 'CS-101', grade: 'Grade 9', teacher: 'Ms. Noor (0310-1234321)', icon: 'Binary', color: 'bg-indigo-100 text-indigo-600' },
+          { name: 'Physics', code: 'PHY-101', grade: 'Grade 10', teacher: 'Sir Usman (0300-9988776)', icon: 'Atom', color: 'bg-red-100 text-red-600' },
+          { name: 'Geography', code: 'GEO-101', grade: 'Grade 8', teacher: 'Miss Zoya (0340-4455667)', icon: 'Map', color: 'bg-teal-100 text-teal-600' },
         ];
-        await new Promise((res) => setTimeout(res, 500)); // Simulate delay
+        await new Promise((res) => setTimeout(res, 500));
         setSubjects(mockData);
       } catch (err) {
         console.error('Failed to fetch subjects', err);
@@ -63,35 +64,6 @@ export default function SubjectsListPage() {
     fetchSubjects();
   }, []);
 
-  const handleAddSubject = () => {
-    if (newSubject.trim()) {
-      setSubjects(prev => [
-        ...prev,
-        {
-          name: newSubject,
-          icon: selectedIcon,
-          color: selectedColor,
-        },
-      ]);
-      setNewSubject('');
-      setSelectedIcon('Book');
-      setSelectedColor('bg-blue-100 text-blue-600');
-      setShowModal(false);
-    }
-  };
-
-  const confirmDelete = (index) => {
-    if (deleteConfirm === index) {
-      const updated = [...subjects];
-      updated.splice(index, 1);
-      setSubjects(updated);
-      setDeleteConfirm(null);
-    } else {
-      setDeleteConfirm(index);
-      setTimeout(() => setDeleteConfirm(null), 2000);
-    }
-  };
-
   const filteredSubjects = subjects.filter(subject =>
     subject.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -101,156 +73,62 @@ export default function SubjectsListPage() {
     return <Icon size={size} />;
   };
 
+  const BasicInfoCard = ({ subject }) => (
+    <div className="p-4 border rounded-md shadow bg-white space-y-2">
+      <h3 className="text-lg font-bold">Basic Info</h3>
+      <p><strong>Name:</strong> {subject.name}</p>
+      <p><strong>Code:</strong> {subject.code}</p>
+      <p><strong>Class/Grade:</strong> {subject.grade}</p>
+      <p><strong>Assigned Teacher:</strong> {subject.teacher}</p>
+    </div>
+  );
 
   return (
-    <div className="bg-white p-6 rounded-md flex-1 m-4 mt-0">
-      <div className="max-w-7xl mx-auto ">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <div>
-            <h1 className="hidden md:block text-lg font-bold text-gray-800">Subjects</h1>
-            {/* <p className="text-sm mt-2 text-gray-500">Manage your educational subjects</p> */}
-          </div>
+    <div className="bg-white p-6 rounded-md m-4">
+      {/* ...existing header code... */}
 
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <TableSearch value={searchTerm} onChange={setSearchTerm} />
+      {loading ? (
+        <div className="text-center py-16 text-gray-500">Loading subjects...</div>
+      ) : filteredSubjects.length === 0 ? (
+        <div className="text-center py-16 text-gray-500">No subjects found</div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredSubjects.map((subject, index) => (
+            <div key={index} className="relative rounded-xl overflow-hidden group bg-white hover:shadow-lg">
+              <div className={`absolute inset-x-0 top-0 h-1 ${subject.color.split(' ')[0]}`} />
+              <div className="p-6">
+                <div className={`w-16 h-16 ${subject.color} rounded-lg flex items-center justify-center mb-4 mx-auto`}>
+                  <IconComponent iconName={subject.icon} />
+                </div>
+                <div className="text-lg font-semibold text-center mb-2 text-gray-800">
+                  {subject.name}
+                </div>
+              </div>
+              <button
+                className="w-full py-3 px-4 bg-gray-50 flex justify-between items-center hover:bg-blue-50 focus:outline-none"
+                onClick={() => setSelectedSubject(subject)}
+              >
+                <span className="text-sm font-medium">View Details</span>
+                <ChevronRight size={16} className="text-blue-500" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
-            <FilterButton />
-
+      {/* Show basic info if subject is selected */}
+      {selectedSubject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
             <button
-              className="bg-purple-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm"
-              onClick={() => setShowModal(true)}
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+              onClick={() => setSelectedSubject(null)}
             >
-              <Plus size={19} className="lg:hidden" />
-              <span className="hidden sm:inline text-sm">Add Subject</span>
+              <X size={20} />
             </button>
+            <BasicInfoCard subject={selectedSubject} />
           </div>
         </div>
-
-        {loading ? (
-          <div className="text-center py-16 text-gray-500">Loading subjects...</div>
-        ) : filteredSubjects.length === 0 ? (
-          <div className="text-center py-16 text-gray-500">
-            <Book size={48} className="mx-auto mb-4 opacity-40" />
-            <p className="text-xl font-medium">No subjects found</p>
-            <p className="mt-2">Try adjusting your search or add a new subject</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredSubjects.map((subject, index) => (
-              <div key={index} className="relative rounded-xl overflow-hidden group bg-white hover:shadow-lg">
-                <div className={`absolute inset-x-0 top-0 h-1 ${subject.color.split(' ')[0]}`} />
-                <div className="p-6">
-                  <div className={`w-16 h-16 ${subject.color} rounded-lg flex items-center justify-center mb-4 mx-auto`}>
-                    <IconComponent iconName={subject.icon} />
-                  </div>
-                  <div className="text-lg font-semibold text-center mb-2 text-gray-800">
-                    {subject.name}
-                  </div>
-
-                  {user?.role === "admin" && (
-
-                    <div className="flex justify-center mt-4 space-x-2 opacity-0 group-hover:opacity-100">
-                      <button
-                        className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
-                        onClick={() => confirmDelete(index)}
-                      >
-                        {deleteConfirm === index ? (
-                          <Check size={16} className="text-red-500" />
-                        ) : (
-                          <Trash2 size={16} className="text-gray-500" />
-                        )}
-                      </button>
-                      <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
-                        <Edit size={16} className="text-gray-500" />
-                      </button>
-                    </div>
-                  )}
-
-
-                </div>
-                <div className="w-full py-3 px-4 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-blue-50">
-                  <span className="text-sm font-medium">View Details</span>
-                  <ChevronRight size={16} className="text-blue-500" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {showModal && (
-        <>
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setShowModal(false)} />
-          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-              <div className="flex justify-between items-center p-5 border-b border-gray-200">
-                <h2 className="text-xl font-bold">Add New Subject</h2>
-                <button className="p-1 rounded-full hover:bg-gray-100" onClick={() => setShowModal(false)}>
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="p-5">
-                <label className="block mb-2 text-sm font-medium">Subject Name</label>
-                <input
-                  type="text"
-                  className="outline-none w-full border p-3 rounded-lg mb-4 border-gray-300 focus:border-purple-500"
-                  placeholder="Enter subject name"
-                  value={newSubject}
-                  onChange={(e) => setNewSubject(e.target.value)}
-                />
-
-                <label className="block mb-2 text-sm font-medium">Choose Icon</label>
-                <div className="grid grid-cols-6 gap-2 mb-4">
-                  {Object.keys(iconComponents).map((iconName) => (
-                    <button
-                      key={iconName}
-                      className={`p-3 rounded-full flex items-center justify-center ${selectedIcon === iconName
-                          ? 'bg-blue-100 text-blue-600 ring-2 ring-blue-500'
-                          : 'bg-gray-100 hover:bg-gray-200'
-                        }`}
-                      onClick={() => setSelectedIcon(iconName)}
-                    >
-                      <IconComponent iconName={iconName} size={20} />
-                    </button>
-                  ))}
-                </div>
-
-                <label className="block mb-2 text-sm font-medium">Choose Color</label>
-                <div className="grid grid-cols-6 gap-2 mb-6">
-                  {colorOptions.map((color) => {
-                    const [bgColor, textColor] = color.split(' ');
-                    return (
-                      <button
-                        key={color}
-                        className={`h-10 rounded-lg ${bgColor} ${textColor} ${selectedColor === color ? 'ring-2 ring-blue-500' : ''
-                          }`}
-                        onClick={() => setSelectedColor(color)}
-                      ></button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 p-5 border-t border-gray-200">
-                <button
-                  className="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className={`px-4 py-2 bg-purple-500 text-white rounded-full flex items-center gap-2 hover:bg-purple-600 ${!newSubject.trim() ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                  onClick={handleAddSubject}
-                  disabled={!newSubject.trim()}
-                >
-                  Add Subject
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
       )}
     </div>
   );

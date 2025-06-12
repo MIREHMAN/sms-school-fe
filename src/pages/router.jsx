@@ -18,6 +18,7 @@ import StudentDashboard from "@/pages/dashboards/StudentDashboard";
 import ParentDashboard from "@/pages/dashboards/ParentDashboard";
 import LoginPage from "@/pages/LoginPage";
 import SingleTeacherPage from "./singlePages/SingleTeacherPage";
+import SingleSubjectPage from "./singlePages/SingleSubjectPage";  
 import SingleStudentPage from "./singlePages/SingleStudentPage";
 import RoleBasedRedirect from "@/components/RoleBasedRedirect"; // ✅ Import here
 
@@ -45,6 +46,7 @@ export function Router() {
         {/* Single Service Routes */}
         <Route path="/teachers/:id" element={<SingleTeacherPage />} />
         <Route path="/students/:id" element={<SingleStudentPage />} />
+        <Route path="/subjects/" element={<SingleSubjectPage />} />
 
         {/* Dashboards */}
         <Route path="/admin" element={<AdminDashboard />} />

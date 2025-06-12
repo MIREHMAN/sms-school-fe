@@ -20,6 +20,9 @@ import LoginPage from "@/pages/LoginPage";
 import SingleTeacherPage from "./singlePages/SingleTeacherPage";
 import SingleSubjectPage from "./singlePages/SingleSubjectPage";  
 import SingleStudentPage from "./singlePages/SingleStudentPage";
+import SingleClassPage from "./singlePages/SingleClassPage"; // ✅ Import here
+import SingleLessonPage from "./singlePages/SingleLessonPage"; // ✅ Import here
+import SingleExamPage from "./singlePages/SingleExamPage"; // ✅ Import here
 import RoleBasedRedirect from "@/components/RoleBasedRedirect"; // ✅ Import here
 
 export function Router() {
@@ -47,6 +50,9 @@ export function Router() {
         <Route path="/teachers/:id" element={<SingleTeacherPage />} />
         <Route path="/students/:id" element={<SingleStudentPage />} />
         <Route path="/subjects/" element={<SingleSubjectPage />} />
+        <Route path="/classes/" element={<SingleClassPage  />}  />
+        <Route path="/lessons/" element={<SingleLessonPage />} />
+        <Route path="/exams/" element={<SingleExamPage />} />
 
         {/* Dashboards */}
         <Route path="/admin" element={<AdminDashboard />} />

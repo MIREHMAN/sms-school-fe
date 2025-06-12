@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import TableSearch from "@/components/TableSearch";
 import PageHeader from "@/components/PageHeader";
+import { Link } from "react-router-dom";
 
 const LessonsListPage = () => {
   const [expandedSection, setExpandedSection] = useState(null);
@@ -253,12 +254,14 @@ const LessonsListPage = () => {
               <Calendar size={14} className="mr-1" />
               {lesson.date}
             </span>
+            <Link to={`/lessons/`} >
             <button 
               className={`${colorClasses.bg} ${colorClasses.text} text-sm font-medium px-3 py-1 rounded-lg flex items-center group-hover:bg-opacity-100 transition-all`} 
               onClick={() => toggleSection(index)}
             >
               View <ChevronRight size={14} className="ml-1 transition-transform" />
             </button>
+            </Link>
           </div>
         </div>
         

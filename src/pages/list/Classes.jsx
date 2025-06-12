@@ -5,6 +5,7 @@ import FilterButton from '@/components/FilterButton';
 import PageHeader from '@/components/PageHeader';
 import { useUser } from '@/context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function ClassesPage() {
   const [classes, setClasses] = useState([
@@ -181,11 +182,13 @@ useEffect(() => {
             <span className="text-xs text-gray-500">
               {cls.students}/35 capacity
             </span>
+            <Link to={`/classes/`}> 
             <button
               className={`${colorClasses.bg} ${colorClasses.text} text-sm font-medium px-3 py-1 rounded-lg flex items-center group-hover:bg-opacity-100 transition-all`}
             >
               View <ChevronRight size={14} className="ml-1 transform group-hover:translate-x-1 transition-transform" />
             </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -263,9 +266,11 @@ useEffect(() => {
                             <span>{cls.students}/35 capacity</span>
                           </div>
                         </div>
+                      
                         <button className={`${getColorClasses(cls.color).bg} ${getColorClasses(cls.color).text} px-4 py-2 rounded-lg ml-4`}>
                           View
                         </button>
+                       
                       </div>
                     );
                 })}

@@ -3,6 +3,7 @@ import { Calendar, Clock, Award, Plus, X, ChevronRight, Trash2 } from 'lucide-re
 import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '@/components/PageHeader';
 
+
 export default function ExamsPage() {
   const [exams, setExams] = useState([
     { id: 1, subject: 'Math', date: '2025-05-10', time: '10:00 AM', duration: '2h 30min', color: 'bg-blue-100 border-blue-400' },

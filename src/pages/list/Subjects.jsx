@@ -19,6 +19,9 @@ export default function SubjectsListPage() {
   const [selectedColor, setSelectedColor] = useState('bg-blue-100 text-blue-600');
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [subjectToDelete, setSubjectToDelete] = useState(null);
 
   const iconComponents = {
     Book, BookOpen, Calculator, Globe, Microscope,
@@ -66,31 +69,60 @@ export default function SubjectsListPage() {
 
   const handleAddSubject = () => {
     if (newSubject.trim()) {
-      setSubjects(prev => [
-        ...prev,
-        {
+      if (editingIndex !== null) {
+        // Update existing subject
+        const updatedSubjects = [...subjects];
+        updatedSubjects[editingIndex] = {
           name: newSubject,
           icon: selectedIcon,
           color: selectedColor,
-        },
-      ]);
-      setNewSubject('');
-      setSelectedIcon('Book');
-      setSelectedColor('bg-blue-100 text-blue-600');
+        };
+        setSubjects(updatedSubjects);
+        setEditingIndex(null);
+      } else {
+        // Add new subject
+        setSubjects(prev => [
+          ...prev,
+          {
+            name: newSubject,
+            icon: selectedIcon,
+            color: selectedColor,
+          },
+        ]);
+      }
+      resetForm();
       setShowModal(false);
     }
   };
 
-  const confirmDelete = (index) => {
-    if (deleteConfirm === index) {
+  const handleEditSubject = (index) => {
+    const subject = subjects[index];
+    setNewSubject(subject.name);
+    setSelectedIcon(subject.icon);
+    setSelectedColor(subject.color);
+    setEditingIndex(index);
+    setShowModal(true);
+  };
+
+  const handleDeleteSubject = (index) => {
+    setSubjectToDelete(index);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (subjectToDelete !== null) {
       const updated = [...subjects];
-      updated.splice(index, 1);
+      updated.splice(subjectToDelete, 1);
       setSubjects(updated);
-      setDeleteConfirm(null);
-    } else {
-      setDeleteConfirm(index);
-      setTimeout(() => setDeleteConfirm(null), 2000);
+      setIsDeleteModalOpen(false);
+      setSubjectToDelete(null);
     }
+  };
+
+  const resetForm = () => {
+    setNewSubject('');
+    setSelectedIcon('Book');
+    setSelectedColor('bg-blue-100 text-blue-600');
   };
 
   const filteredSubjects = subjects.filter(subject =>
@@ -102,24 +134,24 @@ export default function SubjectsListPage() {
     return <Icon size={size} />;
   };
 
-
   return (
     <div className="bg-white p-6 rounded-md flex-1 m-4 mt-0">
-      <div className="max-w-7xl mx-auto ">
+      <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
             <h1 className="hidden md:block text-lg font-bold text-gray-800">Subjects</h1>
-            {/* <p className="text-sm mt-2 text-gray-500">Manage your educational subjects</p> */}
           </div>
 
           <div className="flex items-center gap-4 w-full sm:w-auto">
             <TableSearch value={searchTerm} onChange={setSearchTerm} />
-
             <FilterButton />
-
             <button
               className="bg-purple-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm"
-              onClick={() => setShowModal(true)}
+              onClick={() => {
+                resetForm();
+                setEditingIndex(null);
+                setShowModal(true);
+              }}
             >
               <Plus size={19} className="lg:hidden" />
               <span className="hidden sm:inline text-sm">Add Subject</span>
@@ -149,31 +181,27 @@ export default function SubjectsListPage() {
                   </div>
 
                   {user?.role === "admin" && (
-
                     <div className="flex justify-center mt-4 space-x-2 opacity-0 group-hover:opacity-100">
                       <button
                         className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
-                        onClick={() => confirmDelete(index)}
+                        onClick={() => handleDeleteSubject(index)}
                       >
-                        {deleteConfirm === index ? (
-                          <Check size={16} className="text-red-500" />
-                        ) : (
-                          <Trash2 size={16} className="text-gray-500" />
-                        )}
+                        <Trash2 size={16} className="text-gray-500" />
                       </button>
-                      <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
+                      <button 
+                        className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
+                        onClick={() => handleEditSubject(index)}
+                      >
                         <Edit size={16} className="text-gray-500" />
                       </button>
                     </div>
                   )}
-
-
                 </div>
-               <Link to={`/subjects/`}> 
-                <div className="w-full py-3 px-4 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-blue-50">
-                  <span className="text-sm font-medium">View Details</span>
-                  <ChevronRight size={16} className="text-blue-500" />
-                </div>
+                <Link to={`/subjects/`}> 
+                  <div className="w-full py-3 px-4 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-blue-50">
+                    <span className="text-sm font-medium">View Details</span>
+                    <ChevronRight size={16} className="text-blue-500" />
+                  </div>
                 </Link>
               </div>
             ))}
@@ -181,13 +209,16 @@ export default function SubjectsListPage() {
         )}
       </div>
 
+      {/* Add/Edit Subject Modal */}
       {showModal && (
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setShowModal(false)} />
           <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
               <div className="flex justify-between items-center p-5 border-b border-gray-200">
-                <h2 className="text-xl font-bold">Add New Subject</h2>
+                <h2 className="text-xl font-bold">
+                  {editingIndex !== null ? 'Edit Subject' : 'Add New Subject'}
+                </h2>
                 <button className="p-1 rounded-full hover:bg-gray-100" onClick={() => setShowModal(false)}>
                   <X size={20} />
                 </button>
@@ -248,7 +279,47 @@ export default function SubjectsListPage() {
                   onClick={handleAddSubject}
                   disabled={!newSubject.trim()}
                 >
-                  Add Subject
+                  {editingIndex !== null ? 'Update Subject' : 'Add Subject'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setIsDeleteModalOpen(false)} />
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-center p-5 border-b border-gray-200">
+                <h2 className="text-xl font-bold">Confirm Delete</h2>
+                <button className="p-1 rounded-full hover:bg-gray-100" onClick={() => setIsDeleteModalOpen(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="p-5">
+                <p className="text-gray-600">
+                  Are you sure you want to delete the subject <span className="font-semibold">
+                    {subjectToDelete !== null ? subjects[subjectToDelete]?.name : ''}
+                  </span>? This action cannot be undone.
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-3 p-5 border-t border-gray-200">
+                <button
+                  className="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
+                  onClick={() => setIsDeleteModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-500 text-white rounded-full flex items-center gap-2 hover:bg-red-600"
+                  onClick={confirmDelete}
+                >
+                  Delete Subject
                 </button>
               </div>
             </div>

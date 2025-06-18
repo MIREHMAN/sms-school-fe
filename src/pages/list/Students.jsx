@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Plus, X, Edit2, Trash2 } from "lucide-react";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import Actions from "@/components/Actions";
-import { Plus, X } from "lucide-react";
 
-// Student Model (unchanged)
+// Student Model
 class Student {
   constructor({
     id,
@@ -54,7 +52,7 @@ class Student {
   }
 }
 
-// Dummy Data (unchanged)
+// Dummy Data
 const dummyStudents = [
   new Student({
     id: "S001",
@@ -84,7 +82,7 @@ const dummyStudents = [
   }),
 ];
 
-// Columns and renderRow (unchanged)
+// Columns
 const columns = [
   { header: "Info", accessor: "info" },
   { header: "Student ID", accessor: "studentId", className: "hidden md:table-cell" },
@@ -95,36 +93,42 @@ const columns = [
   { header: "Actions", accessor: "action" },
 ];
 
-const renderRow = (item) => (
-  <tr
-    key={item.id}
-    className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
-  >
-    <td className="flex items-center gap-4 p-4">
-      <img
-        src={item.img || "/avatar.png"}
-        alt=""
-        width={40}
-        height={40}
-        className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
-      />
-      <div className="flex flex-col">
-        <h3 className="font-semibold">{item.name}</h3>
-        <p className="text-xs text-gray-500">{item.email}</p>
-      </div>
-    </td>
-    <td className="hidden md:table-cell">{item.id}</td>
-    <td className="hidden md:table-cell">{item.gender}</td>
-    <td className="hidden md:table-cell">{item.classes.map((c) => c.name).join(", ")}</td>
-    <td className="hidden lg:table-cell">{item.phone}</td>
-    <td className="hidden lg:table-cell">{item.dateofAdmission}</td>
-    <td>
-      <Actions item="students" item_id={item.id} />
-    </td>
-  </tr>
-);
+// Actions Component
+const Actions = ({ onEdit, onDelete }) => {
+  return (
+    <div className="flex gap-2">
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit();
+        }}
+        className="p-1.5 rounded-md hover:bg-gray-100 text-blue-500 hover:text-blue-700"
+        aria-label="Edit"
+      >
+        <Edit2 size={16} />
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        className="p-1.5 rounded-md hover:bg-gray-100 text-red-500 hover:text-red-700"
+        aria-label="Delete"
+      >
+        <Trash2 size={16} />
+      </button>
+    </div>
+  );
+};
 
-const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
+// Student Modal Component
+const StudentModal = ({ 
+  isOpen, 
+  onClose, 
+  onSave, 
+  student = null,
+  mode = 'add'
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -138,6 +142,36 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
     parentPhone: "",
   });
 
+  useEffect(() => {
+    if (mode === 'edit' && student) {
+      setFormData({
+        name: student.name,
+        email: student.email,
+        gender: student.gender,
+        dateofAdmission: student.dateofAdmission,
+        class: student.classes[0]?.name || "",
+        phone: student.phone,
+        address: student.address,
+        birthDate: student.birthDate,
+        parentName: student.parentName,
+        parentPhone: student.parentPhone,
+      });
+    } else {
+      setFormData({
+        name: "",
+        email: "",
+        gender: "",
+        dateofAdmission: "",
+        class: "",
+        phone: "",
+        address: "",
+        birthDate: "",
+        parentName: "",
+        parentPhone: "",
+      });
+    }
+  }, [student, mode]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -145,9 +179,8 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newId = `S${String(dummyStudents.length + 1).padStart(3, '0')}`;
-    const newStudent = new Student({
-      id: newId,
+    const studentData = {
+      id: mode === 'edit' ? student.id : `S${String(dummyStudents.length + 1).padStart(3, '0')}`,
       name: formData.name,
       email: formData.email,
       gender: formData.gender,
@@ -158,8 +191,9 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
       birthDate: formData.birthDate,
       parentName: formData.parentName,
       parentPhone: formData.parentPhone,
-    });
-    onAddStudent(newStudent);
+    };
+    
+    onSave(new Student(studentData), mode);
     onClose();
   };
 
@@ -168,11 +202,14 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100">
-        {/* Modal Header */}
         <div className="sticky top-0 bg-white p-6 pb-4 border-b border-gray-100 flex justify-between items-start">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800">Add New Student</h2>
-            <p className="text-sm text-gray-500 mt-1">Fill in the student details</p>
+            <h2 className="text-2xl font-semibold text-gray-800">
+              {mode === 'add' ? 'Add New Student' : 'Edit Student'}
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              {mode === 'add' ? 'Fill in the student details' : 'Update the student details'}
+            </p>
           </div>
           <button 
             onClick={onClose} 
@@ -183,10 +220,8 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
           </button>
         </div>
         
-        {/* Modal Body */}
         <form onSubmit={handleSubmit} className="p-6 pt-4 space-y-6">
           <div className="space-y-5">
-            {/* Row 1 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
@@ -214,7 +249,6 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
               </div>
             </div>
 
-            {/* Row 2 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Gender</label>
@@ -244,7 +278,6 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
               </div>
             </div>
 
-            {/* Row 3 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Class</label>
@@ -272,7 +305,6 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
               </div>
             </div>
 
-            {/* Address */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Address</label>
               <input
@@ -286,7 +318,6 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
               />
             </div>
 
-            {/* Row 4 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Parent Name</label>
@@ -314,7 +345,6 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
               </div>
             </div>
 
-            {/* Date of Admission */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Date of Admission</label>
               <input
@@ -328,7 +358,6 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
             </div>
           </div>
 
-          {/* Modal Footer */}
           <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
             <button
               type="button"
@@ -341,7 +370,7 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
               type="submit"
               className="px-5 py-2.5 bg-purple-500 text-white rounded-lg text-sm font-medium hover:bg-purple-600 transition-colors shadow-sm"
             >
-              Add Student
+              {mode === 'add' ? 'Add Student' : 'Update Student'}
             </button>
           </div>
         </form>
@@ -350,18 +379,125 @@ const AddStudentModal = ({ isOpen, onClose, onAddStudent }) => {
   );
 };
 
-// Main Component (unchanged except for modal integration)
+// Confirm Delete Modal
+const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, student }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl w-full max-w-md shadow-2xl border border-gray-100">
+        <div className="p-6">
+          <div className="flex justify-between items-start mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">Confirm Delete</h2>
+            <button 
+              onClick={onClose} 
+              className="text-gray-400 hover:text-gray-600 p-1 transition-colors"
+            >
+              <X size={24} />
+            </button>
+          </div>
+          
+          <p className="text-gray-600 mb-6">
+            Are you sure you want to delete student <span className="font-semibold">{student?.name}</span>? 
+            This action cannot be undone.
+          </p>
+          
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                onConfirm(student.id);
+                onClose();
+              }}
+              className="px-5 py-2.5 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors shadow-sm"
+            >
+              Delete Student
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main Component
 const StudentListPage = () => {
   const [students, setStudents] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [currentStudent, setCurrentStudent] = useState(null);
 
   useEffect(() => {
     setStudents(dummyStudents);
   }, []);
 
-  const handleAddStudent = (newStudent) => {
-    setStudents(prev => [...prev, newStudent]);
+  const handleSaveStudent = (student, mode) => {
+    if (mode === 'add') {
+      setStudents(prev => [...prev, student]);
+    } else {
+      setStudents(prev => 
+        prev.map(s => s.id === student.id ? student : s)
+      );
+    }
   };
+
+  const handleDeleteStudent = (studentId) => {
+    setStudents(prev => prev.filter(s => s.id !== studentId));
+  };
+
+  const handleEditClick = (studentId) => {
+    const student = students.find(s => s.id === studentId);
+    if (student) {
+      setCurrentStudent(student);
+      setIsEditModalOpen(true);
+    }
+  };
+
+  const handleDeleteClick = (studentId) => {
+    const student = students.find(s => s.id === studentId);
+    if (student) {
+      setCurrentStudent(student);
+      setIsDeleteModalOpen(true);
+    }
+  };
+
+  const renderRow = (item) => (
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
+    >
+      <td className="flex items-center gap-4 p-4">
+        <img
+          src={item.img || "/avatar.png"}
+          alt=""
+          width={40}
+          height={40}
+          className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
+        />
+        <div className="flex flex-col">
+          <h3 className="font-semibold">{item.name}</h3>
+          <p className="text-xs text-gray-500">{item.email}</p>
+        </div>
+      </td>
+      <td className="hidden md:table-cell">{item.id}</td>
+      <td className="hidden md:table-cell">{item.gender}</td>
+      <td className="hidden md:table-cell">{item.classes.map((c) => c.name).join(", ")}</td>
+      <td className="hidden lg:table-cell">{item.phone}</td>
+      <td className="hidden lg:table-cell">{item.dateofAdmission}</td>
+      <td>
+        <Actions 
+          onEdit={() => handleEditClick(item.id)}
+          onDelete={() => handleDeleteClick(item.id)}
+        />
+      </td>
+    </tr>
+  );
 
   return (
     <section className="bg-white p-6 rounded-md flex-1 m-4 mt-0">
@@ -378,7 +514,7 @@ const StudentListPage = () => {
               <img src="/sort.png" alt="Sort" width={14} height={14} />
             </button>
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => setIsAddModalOpen(true)}
               className="bg-purple-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm hover:bg-purple-600 transition-colors"
             >
               <Plus size={19} className="lg:hidden" />
@@ -389,10 +525,27 @@ const StudentListPage = () => {
 
         <Table columns={columns} renderRow={renderRow} data={students} />
         <Pagination totalPages={5} totalResults={students.length} />
-        <AddStudentModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-          onAddStudent={handleAddStudent}
+        
+        <StudentModal 
+          isOpen={isAddModalOpen} 
+          onClose={() => setIsAddModalOpen(false)} 
+          onSave={handleSaveStudent}
+          mode="add"
+        />
+        
+        <StudentModal 
+          isOpen={isEditModalOpen} 
+          onClose={() => setIsEditModalOpen(false)} 
+          onSave={handleSaveStudent}
+          student={currentStudent}
+          mode="edit"
+        />
+        
+        <ConfirmDeleteModal 
+          isOpen={isDeleteModalOpen} 
+          onClose={() => setIsDeleteModalOpen(false)} 
+          onConfirm={handleDeleteStudent}
+          student={currentStudent}
         />
       </div>
     </section>

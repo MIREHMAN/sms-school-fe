@@ -66,7 +66,6 @@ const SingleSubjectPage = () => {
     const fetchData = async () => {
       const response = {
         id: "subj-123",
-        icon: "📘",
         subject: "Mathematics",
         overview:
           "Comprehensive course covering fundamental mathematical concepts.",
@@ -109,7 +108,7 @@ const SingleSubjectPage = () => {
       <div className="w-full xl:w-2/3 space-y-4">
         <div className="bg-white p-4 rounded-md">
           <h1 className="text-2xl font-semibold mb-2 flex items-center gap-2">
-            {data.icon} {data.subject}
+             {data.subject}
           </h1>
           <p className="text-sm text-gray-500">Subject ID: {data.id}</p>
           <p className="text-gray-600 mt-2">{data.overview}</p>

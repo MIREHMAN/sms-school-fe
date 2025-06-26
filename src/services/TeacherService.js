@@ -1,12 +1,22 @@
-import { makeUnSecureRequest } from "@/config/makeRequest";
+import { makeRequest } from "@/config/makeRequest";
 
 class TeacherService {
   getAllTeachers() {
-    return makeUnSecureRequest(`teachers`, {
+    return makeRequest(`teachers`, {
       method: "GET",
-      
     });
   }
+  addTeacher(data) {
+  console.log("sending data", data);
+  return makeRequest("teachers/", {
+    method: "POST",
+    data, 
+  });
+}
+
+
+
+
 }
 
 const service = new TeacherService();

@@ -6,15 +6,16 @@ import { useUser } from "@/context/UserContext";
 const RoleBasedRedirect = () => {
   const navigate = useNavigate();
   const { user } = useUser();
+  const role = user?.role.toLowerCase() || "";
 
   useEffect(() => {
-    if (user?.role === "admin") {
+    if (role === "admin") {
       navigate("/admin");
-    } else if (user?.role === "teacher") {
+    } else if (role === "teacher") {
       navigate("/teacher");
-    } else if (user?.role === "student") {
+    } else if (role === "student") {
       navigate("/student");
-    } else if (user?.role === "parent") {
+    } else if (role === "parent") {
       navigate("/parent");
     } else {
       navigate("/login");

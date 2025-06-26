@@ -16,7 +16,8 @@ const Navbar = () => {
   const { user } = useUser();
   const [authOpen, setAuthOpen] = useState(false);
 
-  console.log(user)
+  console.log(user?.username)
+  console.log(user?.role)
 
   return (
     <div className="flex items-center justify-between p-4">

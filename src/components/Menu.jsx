@@ -1,6 +1,6 @@
   import React from "react";
   import { Link } from "react-router-dom";
-  import { useUser } from "@/context/UserContext"; // Make sure this path is correct
+  import { useUser } from "@/context/UserContext"; 
 
   const menuItems = [
     {
@@ -35,7 +35,7 @@
   const Menu = () => {
     const { user } = useUser();
         const { logout } = useUser();
-    const userRole = user?.role || "";
+    const userRole = user?.role.toLowerCase() || "";
 
 
   const handleItemClick = (item) => {

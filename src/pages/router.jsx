@@ -12,56 +12,218 @@ import AssignmentsListPage from "@/pages/list/Assingments";
 import ResultListPage from "@/pages/list/Results";
 import AttendanceListPage from "@/pages/list/Attandence";
 import AnnouncementsListPage from "@/pages/list/Announcements";
+
 import AdminDashboard from "@/pages/dashboards/AdminDashboard";
 import TeacherDashboard from "@/pages/dashboards/TeacherDashboard";
 import StudentDashboard from "@/pages/dashboards/StudentDashboard";
 import ParentDashboard from "@/pages/dashboards/ParentDashboard";
+
 import LoginPage from "@/pages/LoginPage";
+
 import SingleTeacherPage from "./singlePages/SingleTeacherPage";
 import SingleSubjectPage from "./singlePages/SingleSubjectPage";  
 import SingleStudentPage from "./singlePages/SingleStudentPage";
-import SingleClassPage from "./singlePages/SingleClassPage"; // ✅ Import here
-import SingleLessonPage from "./singlePages/SingleLessonPage"; // ✅ Import here
-import SingleExamPage from "./singlePages/SingleExamPage"; // ✅ Import here
-import RoleBasedRedirect from "@/components/RoleBasedRedirect"; // ✅ Import here
+import SingleClassPage from "./singlePages/SingleClassPage";
+import SingleLessonPage from "./singlePages/SingleLessonPage";
+import SingleExamPage from "./singlePages/SingleExamPage";
+
+import RoleBasedRedirect from "@/components/RoleBasedRedirect";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export function Router() {
   return (
     <Routes>
+      {/* Public Route */}
       <Route path="/login" element={<LoginPage />} />
-      
-      <Route path="/" element={<DashboardLayout />}>
-        <Route index element={<RoleBasedRedirect />} /> {/* ✅ Role-based routing */}
 
-        {/* List Routes */}
-        <Route path={ROUTES.teachers} element={<TeacherListPage />} />
-        <Route path={ROUTES.students} element={<StudentListPage />} />
-        <Route path={ROUTES.parents} element={<ParentListPage />} />
-        <Route path={ROUTES.subjects} element={<SubjectsListPage />} />
-        <Route path={ROUTES.classes} element={<ClassesListPage />} />
-        <Route path={ROUTES.lessons} element={<LessonsListPage />} />
-        <Route path={ROUTES.exams} element={<ExamsListPage />} />
-        <Route path={ROUTES.assignments} element={<AssignmentsListPage />} />
-        <Route path={ROUTES.results} element={<ResultListPage />} />
-        <Route path={ROUTES.attendance} element={<AttendanceListPage />} />
-        <Route path={ROUTES.announcements} element={<AnnouncementsListPage />} />
+      {/* Protected Routes */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        {/* Redirect to dashboard based on role */}
+        <Route index element={<RoleBasedRedirect />} />
 
-        {/* Single Service Routes */}
-        <Route path="/teachers/:id" element={<SingleTeacherPage />} />
-        <Route path="/students/:id" element={<SingleStudentPage />} />
-        <Route path="/subjects/" element={<SingleSubjectPage />} />
-        <Route path="/classes/" element={<SingleClassPage  />}  />
-        <Route path="/lessons/" element={<SingleLessonPage />} />
-        <Route path="/exams/" element={<SingleExamPage />} />
+        {/* List Routes - allow all roles (optional: restrict per role) */}
+        <Route
+          path={ROUTES.teachers}
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <TeacherListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.students}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <StudentListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.parents}
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <ParentListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.subjects}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <SubjectsListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.classes}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <ClassesListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.lessons}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <LessonsListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.exams}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <ExamsListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.assignments}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <AssignmentsListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.results}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <ResultListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.attendance}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <AttendanceListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.announcements}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <AnnouncementsListPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Single Pages */}
+        <Route
+          path="/teachers/:id"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <SingleTeacherPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/students/:id"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <SingleStudentPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/subjects"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <SingleSubjectPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/classes"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <SingleClassPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lessons"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <SingleLessonPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/exams"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "teacher"]}>
+              <SingleExamPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Dashboards */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/teacher" element={<TeacherDashboard />} />
-        <Route path="/student" element={<StudentDashboard />} />
-        <Route path="/parent" element={<ParentDashboard />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher"
+          element={
+            <ProtectedRoute allowedRoles={["teacher"]}>
+              <TeacherDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/parent"
+          element={
+            <ProtectedRoute allowedRoles={["parent"]}>
+              <ParentDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
-      {/* Fallback */}
+      {/* Catch-all route */}
       <Route path="*" element={<LoginPage />} />
     </Routes>
   );

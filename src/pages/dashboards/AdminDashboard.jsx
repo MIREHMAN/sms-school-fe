@@ -65,6 +65,36 @@ const AdminDashboard = () => {
           </motion.button>
         </div>
       </div>
+      
+      {/* Quick Actions */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+        className="mt-8"
+      >
+        <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            { icon: <Users className="w-5 h-5" />, label: 'Add Student', color: 'bg-indigo-100 text-indigo-600' },
+            { icon: <UserCog className="w-5 h-5" />, label: 'Add Staff', color: 'bg-green-100 text-green-600' },
+            { icon: <BookOpen className="w-5 h-5" />, label: 'Create Course', color: 'bg-amber-100 text-amber-600' },
+            { icon: <CalendarDays className="w-5 h-5" />, label: 'Schedule Event', color: 'bg-purple-100 text-purple-600' },
+            { icon: <CreditCard className="w-5 h-5" />, label: 'Process Payment', color: 'bg-emerald-100 text-emerald-600' },
+            { icon: <PieChart className="w-5 h-5" />, label: 'Generate Report', color: 'bg-rose-100 text-rose-600' },
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ y: -3, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+              whileTap={{ scale: 0.98 }}
+              className={`${item.color} p-4 rounded-lg flex flex-col items-center cursor-pointer shadow-sm border border-transparent hover:border-white/20 transition-all`}
+            >
+              <div className="mb-2 p-2 bg-white/20 rounded-full">{item.icon}</div>
+              <span className="font-medium text-sm text-center">{item.label}</span>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200 mb-6">
@@ -192,35 +222,6 @@ const AdminDashboard = () => {
         </motion.div>
       </div>
 
-      {/* Quick Actions */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="mt-8"
-      >
-        <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {[
-            { icon: <Users className="w-5 h-5" />, label: 'Add Student', color: 'bg-indigo-100 text-indigo-600' },
-            { icon: <UserCog className="w-5 h-5" />, label: 'Add Staff', color: 'bg-green-100 text-green-600' },
-            { icon: <BookOpen className="w-5 h-5" />, label: 'Create Course', color: 'bg-amber-100 text-amber-600' },
-            { icon: <CalendarDays className="w-5 h-5" />, label: 'Schedule Event', color: 'bg-purple-100 text-purple-600' },
-            { icon: <CreditCard className="w-5 h-5" />, label: 'Process Payment', color: 'bg-emerald-100 text-emerald-600' },
-            { icon: <PieChart className="w-5 h-5" />, label: 'Generate Report', color: 'bg-rose-100 text-rose-600' },
-          ].map((item, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ y: -3, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-              whileTap={{ scale: 0.98 }}
-              className={`${item.color} p-4 rounded-lg flex flex-col items-center cursor-pointer shadow-sm border border-transparent hover:border-white/20 transition-all`}
-            >
-              <div className="mb-2 p-2 bg-white/20 rounded-full">{item.icon}</div>
-              <span className="font-medium text-sm text-center">{item.label}</span>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
     </div>
   );
 };

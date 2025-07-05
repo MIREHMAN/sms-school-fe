@@ -6,15 +6,20 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
   const { user } = useUser();
   const navigate = useNavigate();
 
+  const userRole = user?.role?.toLowerCase();
+  const isAuthorized = user && (!allowedRoles || allowedRoles.includes(userRole));
+
   useEffect(() => {
-    if (!user || (allowedRoles && !allowedRoles.includes(user.role))) {
+    if (!isAuthorized) {
       navigate('/login');
     }
-  }, [user]);
+  }, [isAuthorized, navigate]);
 
-  if (!user || (allowedRoles && !allowedRoles.includes(user.role))) {
+  if (!isAuthorized) {
     return null;
   }
 
   return children;
 };
+
+export default ProtectedRoute;

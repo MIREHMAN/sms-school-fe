@@ -13,11 +13,6 @@ class TeacherService {
     data, 
   });
 }
-
-
-
-
 }
-
 const service = new TeacherService();
 export { service as TeacherService };

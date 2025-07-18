@@ -8,28 +8,26 @@ import {
 import { Button } from "@/components/ui/button";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { LessonService } from "@/services/LessonService";
+import { SubjectService } from "@/services/SubjectService";
 import { useAsyncFn } from "@/hooks/useAsync";
 
-const AddLessonModal = ({ open, onClose }) => {
+const AddSubjectModal = ({ open, onClose }) => {
   const initialValues = {
-    title: "",
-    content: "",
-    date: "",
-    subject: "",
-    classroom: "",
+    name: "",
+    code: "",
+    description: "",
+    teacher: "",
   };
 
   const validationSchema = Yup.object({
-    title: Yup.string().required("Title is required"),
-    content: Yup.string().required("Content is required"),
-    date: Yup.date().required("Date is required"),
-    subject: Yup.string().required("Subject is required"),
-    classroom: Yup.string().required("Classroom is required"),
+    name: Yup.string().required("Subject name is required"),
+    code: Yup.string().required("Subject code is required"),
+    description: Yup.string(),
+    teacher: Yup.string().required("Teacher ID is required"),
   });
 
   const { loading, error, execute } = useAsyncFn((data) =>
-    LessonService.addLesson(data)
+    SubjectService.addSubject(data)
   );
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -38,7 +36,7 @@ const AddLessonModal = ({ open, onClose }) => {
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Failed to create lesson:", err);
+      console.error("Failed to create subject:", err);
     }
   };
 
@@ -46,12 +44,12 @@ const AddLessonModal = ({ open, onClose }) => {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New Lesson</DialogTitle>
+          <DialogTitle>Add Subject</DialogTitle>
         </DialogHeader>
 
         {error && (
           <div className="text-red-500 text-sm mb-2">
-            {error?.data?.error || "Failed to create lesson"}
+            {error?.data?.error || "Failed to create subject"}
           </div>
         )}
 
@@ -63,70 +61,57 @@ const AddLessonModal = ({ open, onClose }) => {
           <Form className="space-y-5">
             <div>
               <Field
-                name="title"
+                name="name"
                 type="text"
-                placeholder="Lesson Title"
+                placeholder="Subject Name"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="title"
+                name="name"
                 component="div"
-                className="text-red-500 text-xs mt-1"
+                className="text-red-500 text-xs"
               />
             </div>
 
             <div>
               <Field
+                name="code"
+                type="text"
+                placeholder="Subject Code"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage
+                name="code"
+                component="div"
+                className="text-red-500 text-xs"
+              />
+            </div>
+
+            <div>
+              <Field
+                name="description"
                 as="textarea"
-                name="content"
-                placeholder="Lesson Content"
+                placeholder="Description (optional)"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="content"
+                name="description"
                 component="div"
-                className="text-red-500 text-xs mt-1"
+                className="text-red-500 text-xs"
               />
             </div>
 
             <div>
               <Field
-                name="date"
-                type="date"
-                className="border px-3 py-2 rounded w-full"
-              />
-              <ErrorMessage
-                name="date"
-                component="div"
-                className="text-red-500 text-xs mt-1"
-              />
-            </div>
-
-            <div>
-              <Field
-                name="subject"
+                name="teacher"
                 type="text"
-                placeholder="Subject"
+                placeholder="Teacher ID"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="subject"
+                name="teacher"
                 component="div"
-                className="text-red-500 text-xs mt-1"
-              />
-            </div>
-
-            <div>
-              <Field
-                name="classroom"
-                type="text"
-                placeholder="Classroom"
-                className="border px-3 py-2 rounded w-full"
-              />
-              <ErrorMessage
-                name="classroom"
-                component="div"
-                className="text-red-500 text-xs mt-1"
+                className="text-red-500 text-xs"
               />
             </div>
 
@@ -145,4 +130,4 @@ const AddLessonModal = ({ open, onClose }) => {
   );
 };
 
-export default AddLessonModal;
+export default AddSubjectModal;

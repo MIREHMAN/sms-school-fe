@@ -8,28 +8,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { LessonService } from "@/services/LessonService";
+import { ResultService } from "@/services/ResultService";
 import { useAsyncFn } from "@/hooks/useAsync";
 
-const AddLessonModal = ({ open, onClose }) => {
+const AddResultModal = ({ open, onClose }) => {
   const initialValues = {
-    title: "",
-    content: "",
-    date: "",
-    subject: "",
-    classroom: "",
+    student: "",
+    exam: "",
+    score: "",
+    remarks: "",
   };
 
   const validationSchema = Yup.object({
-    title: Yup.string().required("Title is required"),
-    content: Yup.string().required("Content is required"),
-    date: Yup.date().required("Date is required"),
-    subject: Yup.string().required("Subject is required"),
-    classroom: Yup.string().required("Classroom is required"),
+    student: Yup.string().required("Student is required"),
+    exam: Yup.string().required("Exam is required"),
+    score: Yup.number()
+      .required("Score is required")
+      .min(0, "Score cannot be negative"),
+    remarks: Yup.string(),
   });
 
   const { loading, error, execute } = useAsyncFn((data) =>
-    LessonService.addLesson(data)
+    ResultService.addResult(data)
   );
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -38,7 +38,7 @@ const AddLessonModal = ({ open, onClose }) => {
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Failed to create lesson:", err);
+      console.error("Failed to create result:", err);
     }
   };
 
@@ -46,12 +46,12 @@ const AddLessonModal = ({ open, onClose }) => {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New Lesson</DialogTitle>
+          <DialogTitle>Add Result</DialogTitle>
         </DialogHeader>
 
         {error && (
           <div className="text-red-500 text-sm mb-2">
-            {error?.data?.error || "Failed to create lesson"}
+            {error?.data?.error || "Failed to create result"}
           </div>
         )}
 
@@ -63,13 +63,13 @@ const AddLessonModal = ({ open, onClose }) => {
           <Form className="space-y-5">
             <div>
               <Field
-                name="title"
+                name="student"
                 type="text"
-                placeholder="Lesson Title"
+                placeholder="Student ID"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="title"
+                name="student"
                 component="div"
                 className="text-red-500 text-xs mt-1"
               />
@@ -77,54 +77,41 @@ const AddLessonModal = ({ open, onClose }) => {
 
             <div>
               <Field
+                name="exam"
+                type="text"
+                placeholder="Exam ID"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage
+                name="exam"
+                component="div"
+                className="text-red-500 text-xs mt-1"
+              />
+            </div>
+
+            <div>
+              <Field
+                name="score"
+                type="number"
+                placeholder="Score"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage
+                name="score"
+                component="div"
+                className="text-red-500 text-xs mt-1"
+              />
+            </div>
+
+            <div>
+              <Field
+                name="remarks"
                 as="textarea"
-                name="content"
-                placeholder="Lesson Content"
+                placeholder="Remarks"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="content"
-                component="div"
-                className="text-red-500 text-xs mt-1"
-              />
-            </div>
-
-            <div>
-              <Field
-                name="date"
-                type="date"
-                className="border px-3 py-2 rounded w-full"
-              />
-              <ErrorMessage
-                name="date"
-                component="div"
-                className="text-red-500 text-xs mt-1"
-              />
-            </div>
-
-            <div>
-              <Field
-                name="subject"
-                type="text"
-                placeholder="Subject"
-                className="border px-3 py-2 rounded w-full"
-              />
-              <ErrorMessage
-                name="subject"
-                component="div"
-                className="text-red-500 text-xs mt-1"
-              />
-            </div>
-
-            <div>
-              <Field
-                name="classroom"
-                type="text"
-                placeholder="Classroom"
-                className="border px-3 py-2 rounded w-full"
-              />
-              <ErrorMessage
-                name="classroom"
+                name="remarks"
                 component="div"
                 className="text-red-500 text-xs mt-1"
               />
@@ -145,4 +132,4 @@ const AddLessonModal = ({ open, onClose }) => {
   );
 };
 
-export default AddLessonModal;
+export default AddResultModal;

@@ -8,28 +8,32 @@ import {
 import { Button } from "@/components/ui/button";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { LessonService } from "@/services/LessonService";
+import { StudentService } from "@/services/StudentService";
 import { useAsyncFn } from "@/hooks/useAsync";
 
-const AddLessonModal = ({ open, onClose }) => {
+const AddStudentModal = ({ open, onClose }) => {
   const initialValues = {
-    title: "",
-    content: "",
-    date: "",
-    subject: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    dob: "",
+    gender: "",
     classroom: "",
   };
 
   const validationSchema = Yup.object({
-    title: Yup.string().required("Title is required"),
-    content: Yup.string().required("Content is required"),
-    date: Yup.date().required("Date is required"),
-    subject: Yup.string().required("Subject is required"),
+    first_name: Yup.string().required("First name is required"),
+    last_name: Yup.string().required("Last name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    phone: Yup.string().required("Phone is required"),
+    dob: Yup.date().required("Date of Birth is required"),
+    gender: Yup.string().required("Gender is required"),
     classroom: Yup.string().required("Classroom is required"),
   });
 
   const { loading, error, execute } = useAsyncFn((data) =>
-    LessonService.addLesson(data)
+    StudentService.addStudent(data)
   );
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -38,7 +42,7 @@ const AddLessonModal = ({ open, onClose }) => {
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Failed to create lesson:", err);
+      console.error("Failed to create student:", err);
     }
   };
 
@@ -46,12 +50,12 @@ const AddLessonModal = ({ open, onClose }) => {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New Lesson</DialogTitle>
+          <DialogTitle>Add Student</DialogTitle>
         </DialogHeader>
 
         {error && (
           <div className="text-red-500 text-sm mb-2">
-            {error?.data?.error || "Failed to create lesson"}
+            {error?.data?.error || "Failed to create student"}
           </div>
         )}
 
@@ -63,56 +67,88 @@ const AddLessonModal = ({ open, onClose }) => {
           <Form className="space-y-5">
             <div>
               <Field
-                name="title"
+                name="first_name"
                 type="text"
-                placeholder="Lesson Title"
+                placeholder="First Name"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="title"
+                name="first_name"
                 component="div"
-                className="text-red-500 text-xs mt-1"
+                className="text-red-500 text-xs"
               />
             </div>
 
             <div>
               <Field
-                as="textarea"
-                name="content"
-                placeholder="Lesson Content"
+                name="last_name"
+                type="text"
+                placeholder="Last Name"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="content"
+                name="last_name"
                 component="div"
-                className="text-red-500 text-xs mt-1"
+                className="text-red-500 text-xs"
               />
             </div>
 
             <div>
               <Field
-                name="date"
+                name="email"
+                type="email"
+                placeholder="Email"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="text-red-500 text-xs"
+              />
+            </div>
+
+            <div>
+              <Field
+                name="phone"
+                type="text"
+                placeholder="Phone Number"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage
+                name="phone"
+                component="div"
+                className="text-red-500 text-xs"
+              />
+            </div>
+
+            <div>
+              <Field
+                name="dob"
                 type="date"
+                placeholder="Date of Birth"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="date"
+                name="dob"
                 component="div"
-                className="text-red-500 text-xs mt-1"
+                className="text-red-500 text-xs"
               />
             </div>
 
             <div>
               <Field
-                name="subject"
-                type="text"
-                placeholder="Subject"
+                as="select"
+                name="gender"
                 className="border px-3 py-2 rounded w-full"
-              />
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </Field>
               <ErrorMessage
-                name="subject"
+                name="gender"
                 component="div"
-                className="text-red-500 text-xs mt-1"
+                className="text-red-500 text-xs"
               />
             </div>
 
@@ -120,13 +156,13 @@ const AddLessonModal = ({ open, onClose }) => {
               <Field
                 name="classroom"
                 type="text"
-                placeholder="Classroom"
+                placeholder="Classroom ID"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
                 name="classroom"
                 component="div"
-                className="text-red-500 text-xs mt-1"
+                className="text-red-500 text-xs"
               />
             </div>
 
@@ -145,4 +181,4 @@ const AddLessonModal = ({ open, onClose }) => {
   );
 };
 
-export default AddLessonModal;
+export default AddStudentModal;

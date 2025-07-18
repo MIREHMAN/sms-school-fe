@@ -14,9 +14,9 @@ import { useAsyncFn } from "@/hooks/useAsync";
 const AddClassModal = ({ open, onClose }) => {
   const initialValues = {
     name: "",
-    grade: "",
-    section: "",
-    description: "",
+    student: "",
+    category: "",
+    color: "",
   };
 
   const validationSchema = Yup.object({

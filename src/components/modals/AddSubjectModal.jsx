@@ -14,9 +14,8 @@ import { useAsyncFn } from "@/hooks/useAsync";
 const AddSubjectModal = ({ open, onClose }) => {
   const initialValues = {
     name: "",
-    code: "",
-    description: "",
-    teacher: "",
+    icon: "",
+    color: "",
   };
 
   const validationSchema = Yup.object({

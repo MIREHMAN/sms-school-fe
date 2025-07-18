@@ -10,14 +10,19 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { ExamService } from "@/services/ExamService";
 import { useAsyncFn } from "@/hooks/useAsync";
-
+fields = ['id', 'subject','className', 'year','type','date', 'time', 'duration', 'location','color']
 const AddExamModal = ({ open, onClose }) => {
   const initialValues = {
-    title: "",
-    date: "",
-    total_marks: "",
+    id: "",
     subject: "",
-    description: "",
+    className: "",
+    year: "",
+    type: "",
+    date: "",
+    time: "",
+    duration: "",
+    location: "",
+    color: "",
   };
 
   const validationSchema = Yup.object({

@@ -10,12 +10,17 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { AnnouncementService } from "@/services/AnnouncementService"; // You need to create this service file
 import { useAsyncFn } from "@/hooks/useAsync";
-
 const AddAnnouncementModal = ({ open, onClose }) => {
   const initialValues = {
+    id: "",
     title: "",
-    message: "",
     date: "",
+    description: "",
+    author: "",
+    category:"",
+    pinned: "",
+    views: "",
+    comments: ""
   };
 
   const validationSchema = Yup.object({

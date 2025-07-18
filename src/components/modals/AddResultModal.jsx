@@ -10,13 +10,21 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { ResultService } from "@/services/ResultService";
 import { useAsyncFn } from "@/hooks/useAsync";
-
+fields = ['id', 'subject', 'className', 'year', 'examType', 'term', 'date','score','total', 'grade', 'remarks', 'color' ]
 const AddResultModal = ({ open, onClose }) => {
   const initialValues = {
-    student: "",
-    exam: "",
+    id: "",
+    subject: "",
+    className: "",
+    year: "",
+    examType: "",
+    term: "",
+    date: "",
     score: "",
+    total: "",
+    grade: "",
     remarks: "",
+    color: ""
   };
 
   const validationSchema = Yup.object({

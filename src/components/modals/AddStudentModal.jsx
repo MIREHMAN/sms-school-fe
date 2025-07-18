@@ -10,16 +10,18 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { StudentService } from "@/services/StudentService";
 import { useAsyncFn } from "@/hooks/useAsync";
-
+['id','user','first_name','last_name', 'date_of_birth', 'email', 'phone_number', 'address','classroom']
 const AddStudentModal = ({ open, onClose }) => {
   const initialValues = {
+    id: "",
+    user: "",
     first_name: "",
     last_name: "",
+    date_of_birth: "",
     email: "",
-    phone: "",
-    dob: "",
-    gender: "",
-    classroom: "",
+    phone_number: "",
+    address: "",
+    classroom: ""
   };
 
   const validationSchema = Yup.object({

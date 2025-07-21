@@ -11,18 +11,29 @@ import * as Yup from "yup";
 import { SubjectService } from "@/services/SubjectService";
 import { useAsyncFn } from "@/hooks/useAsync";
 
+const subjectTypeOptions = [
+  { label: "Core", value: "CORE" },
+  { label: "Elective", value: "ELECTIVE" },
+];
+
+const subjectStatusOptions = [
+  { label: "Active", value: "ACTIVE" },
+  { label: "Inactive", value: "INACTIVE" },
+];
+
 const AddSubjectModal = ({ open, onClose }) => {
   const initialValues = {
-    name: "",
-    icon: "",
-    color: "",
+    subject_name: "",
+    subject_code: "",
+    subject_type: "CORE",
+    subject_status: "ACTIVE",
   };
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Subject name is required"),
-    code: Yup.string().required("Subject code is required"),
-    description: Yup.string(),
-    teacher: Yup.string().required("Teacher ID is required"),
+    subject_name: Yup.string().required("Subject name is required"),
+    subject_code: Yup.string().required("Subject code is required"),
+    subject_type: Yup.string().oneOf(["CORE", "ELECTIVE"]),
+    subject_status: Yup.string().oneOf(["ACTIVE", "INACTIVE"]),
   });
 
   const { loading, error, execute } = useAsyncFn((data) =>
@@ -60,13 +71,13 @@ const AddSubjectModal = ({ open, onClose }) => {
           <Form className="space-y-5">
             <div>
               <Field
-                name="name"
+                name="subject_name"
                 type="text"
                 placeholder="Subject Name"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="name"
+                name="subject_name"
                 component="div"
                 className="text-red-500 text-xs"
               />
@@ -74,13 +85,13 @@ const AddSubjectModal = ({ open, onClose }) => {
 
             <div>
               <Field
-                name="code"
+                name="subject_code"
                 type="text"
                 placeholder="Subject Code"
                 className="border px-3 py-2 rounded w-full"
               />
               <ErrorMessage
-                name="code"
+                name="subject_code"
                 component="div"
                 className="text-red-500 text-xs"
               />
@@ -88,13 +99,18 @@ const AddSubjectModal = ({ open, onClose }) => {
 
             <div>
               <Field
-                name="description"
-                as="textarea"
-                placeholder="Description (optional)"
+                as="select"
+                name="subject_type"
                 className="border px-3 py-2 rounded w-full"
-              />
+              >
+                {subjectTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Field>
               <ErrorMessage
-                name="description"
+                name="subject_type"
                 component="div"
                 className="text-red-500 text-xs"
               />
@@ -102,13 +118,18 @@ const AddSubjectModal = ({ open, onClose }) => {
 
             <div>
               <Field
-                name="teacher"
-                type="text"
-                placeholder="Teacher ID"
+                as="select"
+                name="subject_status"
                 className="border px-3 py-2 rounded w-full"
-              />
+              >
+                {subjectStatusOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Field>
               <ErrorMessage
-                name="teacher"
+                name="subject_status"
                 component="div"
                 className="text-red-500 text-xs"
               />

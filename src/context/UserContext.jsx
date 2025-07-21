@@ -5,8 +5,10 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [tokens, setTokens] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); 
 
   const loadUserFromStorage = () => {
+    setIsLoading(true); 
     const saved = localStorage.getItem("SchoolAuthData");
     if (saved) {
       try {
@@ -14,9 +16,10 @@ export const UserProvider = ({ children }) => {
         if (parsed?.user) {
           setUser({
             ...parsed.user,
-            role: parsed.user.role.toLowerCase(), // normalize role
+            role: parsed.user.role.toLowerCase(),
           });
           setTokens(parsed.tokens || null);
+          setIsLoading(false); 
           return;
         }
       } catch (err) {
@@ -25,16 +28,14 @@ export const UserProvider = ({ children }) => {
     }
     setUser(null);
     setTokens(null);
+    setIsLoading(false); 
   };
 
   useEffect(() => {
     loadUserFromStorage();
-
-    // Handle manual localStorage clearing (multi-tab or devtools)
     const handleStorageChange = () => {
       loadUserFromStorage();
     };
-
     window.addEventListener("storage", handleStorageChange);
     return () => {
       window.removeEventListener("storage", handleStorageChange);
@@ -60,7 +61,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, tokens, login, logout }}>
+    <UserContext.Provider value={{ user, tokens, login, logout, isLoading }}>
       {children}
     </UserContext.Provider>
   );

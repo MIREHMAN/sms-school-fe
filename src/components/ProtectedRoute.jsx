@@ -3,17 +3,21 @@ import { useUser } from '@/context/UserContext';
 import { useNavigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const navigate = useNavigate();
 
   const userRole = user?.role?.toLowerCase();
   const isAuthorized = user && (!allowedRoles || allowedRoles.includes(userRole));
 
   useEffect(() => {
-    if (!isAuthorized) {
+    if (!isLoading && !isAuthorized) {
       navigate('/login');
     }
-  }, [isAuthorized, navigate]);
+  }, [isAuthorized, isLoading, navigate]);
+
+  if (isLoading) {
+    return <div>Loading...</div>; 
+  }
 
   if (!isAuthorized) {
     return null;

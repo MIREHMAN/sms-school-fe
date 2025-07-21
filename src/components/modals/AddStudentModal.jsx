@@ -13,39 +13,44 @@ import { useAsyncFn } from "@/hooks/useAsync";
 
 const AddStudentModal = ({ open, onClose }) => {
   const initialValues = {
+    username: "",
+    password: "",
     first_name: "",
     last_name: "",
     email: "",
-    phone_number: "",
-    date_of_birth: "",
-    gender: "",
-    address: "",
-    classroom: "", // should match classroom ID
+    phone: "",
+    dob: "",
   };
 
   const validationSchema = Yup.object({
+    username: Yup.string().required("Username is required"),
+    password: Yup.string().min(6).required("Password is required"),
     first_name: Yup.string().required("First name is required"),
     last_name: Yup.string().required("Last name is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    phone_number: Yup.string().required("Phone number is required"),
-    date_of_birth: Yup.date().required("Date of Birth is required"),
-    gender: Yup.string().required("Gender is required"),
-    address: Yup.string().required("Address is required"),
-    classroom: Yup.string().required("Classroom ID is required"),
+    email: Yup.string().email().required("Email is required"),
+    phone: Yup.string().required("Phone is required"),
+    dob: Yup.date().required("Date of birth is required"),
   });
 
-  const { loading, error, execute } = useAsyncFn((data) =>
-    StudentService.addStudent(data)
-  );
+  const { loading, error, execute } = useAsyncFn(async (formData) => {
+    const response = await StudentService.addStudent(formData);
+    console.log("API Response:", response);
+    return response;
+  });
 
   const handleSubmit = async (values, { resetForm }) => {
+    const payload = {
+      ...values,
+      dob: new Date(values.dob).toISOString().split("T")[0],
+    };
+    console.log("Submitting payload to API:", payload);
+
     try {
-      console.log("Submitting student:", values);
-      await execute(values);
+      await execute(payload);
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Error submitting student:", err);
+      console.error("Student creation failed:", err);
     }
   };
 
@@ -53,13 +58,13 @@ const AddStudentModal = ({ open, onClose }) => {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Student</DialogTitle>
+          <DialogTitle>Add New Student</DialogTitle>
         </DialogHeader>
 
         {error && (
-          <div className="text-red-500 text-sm mb-2">
-            {error?.data?.error || "Failed to create student"}
-          </div>
+          <p className="text-red-600 text-sm mb-2">
+            {error?.message || "Something went wrong"}
+          </p>
         )}
 
         <Formik
@@ -67,54 +72,71 @@ const AddStudentModal = ({ open, onClose }) => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          <Form className="space-y-5">
-            {[
-              { name: "first_name", type: "text", placeholder: "First Name" },
-              { name: "last_name", type: "text", placeholder: "Last Name" },
-              { name: "email", type: "email", placeholder: "Email" },
-              { name: "phone_number", type: "text", placeholder: "Phone Number" },
-              { name: "date_of_birth", type: "date", placeholder: "Date of Birth" },
-              { name: "address", type: "text", placeholder: "Address" },
-              { name: "classroom", type: "text", placeholder: "Classroom ID" },
-            ].map(({ name, type, placeholder }) => (
-              <div key={name}>
-                <Field
-                  name={name}
-                  type={type}
-                  placeholder={placeholder}
-                  className="border px-3 py-2 rounded w-full"
-                />
-                <ErrorMessage
-                  name={name}
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
-              </div>
-            ))}
-
-            <div>
+          <Form className="space-y-6">
+            {/* Credentials */}
+            <div className="grid gap-2">
               <Field
-                as="select"
-                name="gender"
+                name="username"
+                placeholder="Username"
                 className="border px-3 py-2 rounded w-full"
-              >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </Field>
-              <ErrorMessage
-                name="gender"
-                component="div"
-                className="text-red-500 text-xs"
               />
+              <ErrorMessage name="username" component="div" className="text-red-500 text-xs" />
+
+              <Field
+                name="password"
+                type="password"
+                placeholder="Password"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage name="password" component="div" className="text-red-500 text-xs" />
             </div>
 
-            <DialogFooter className="pt-2">
+            {/* Personal Info */}
+            <div className="grid gap-2">
+              <Field
+                name="first_name"
+                placeholder="First Name"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage name="first_name" component="div" className="text-red-500 text-xs" />
+
+              <Field
+                name="last_name"
+                placeholder="Last Name"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage name="last_name" component="div" className="text-red-500 text-xs" />
+
+              <Field
+                name="email"
+                type="email"
+                placeholder="Email"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage name="email" component="div" className="text-red-500 text-xs" />
+
+              <Field
+                name="phone"
+                placeholder="Phone"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage name="phone" component="div" className="text-red-500 text-xs" />
+
+              <Field
+                name="dob"
+                type="date"
+                className="border px-3 py-2 rounded w-full"
+              />
+              <ErrorMessage name="dob" component="div" className="text-red-500 text-xs" />
+            </div>
+
+            {/* Footer */}
+            <DialogFooter>
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? "Adding..." : "Add"}
+                {loading ? "Adding..." : "Add Student"}
               </Button>
             </DialogFooter>
           </Form>

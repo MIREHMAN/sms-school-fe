@@ -2,10 +2,12 @@ import axios from "axios";
 
 const axiosUnSecureInstance = axios.create({
   baseURL: import.meta.env.VITE_REACT_APP_SERVER_BASE_URL || "",
+  
 });
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_REACT_APP_SERVER_BASE_URL || "",
+  
 });
 
 // Add interceptor to attach the token

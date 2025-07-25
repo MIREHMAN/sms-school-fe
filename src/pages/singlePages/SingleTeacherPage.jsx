@@ -11,9 +11,22 @@ import {
 } from "lucide-react";
 import Performance from "@/components/Performance";
 import Announcements from "@/components/Announcements";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { TeacherService } from "@/services/TeacherService"; // Adjust path
 
 // Replace with actual components or remove if not used
 const SingleTeacherPage = () => {
+    const { id } = useParams();
+    const [teacher, setTeacher] = useState(null);
+
+    useEffect(() => {
+      TeacherService.getTeacherById(id).then((res) => {
+        setTeacher(res);
+      });
+    }, [id]);
+
+    if (!teacher) return <p className="p-4">Loading teacher...</p>;
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}
@@ -30,7 +43,7 @@ const SingleTeacherPage = () => {
               />
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
-              <h1 className="text-xl font-semibold">Sarah Johnson</h1>
+              <h1 className="text-xl font-semibold">{teacher.first_name} {teacher.last_name}</h1>
               <p className="text-sm text-gray-500">
                 Experienced teacher currently teaching Math and Science.
               </p>
@@ -45,11 +58,11 @@ const SingleTeacherPage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Mail size={14} />
-                  <span>teacher@gmail.com</span>
+                  <span>{teacher.email}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone size={14} />
-                  <span>+1 234 567</span>
+                  <span>{teacher.phone_number}</span>
                 </div>
               </div>
             </div>

@@ -183,7 +183,7 @@ const AddTeacherModal = ({ open, onClose }) => {
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading}>
+              <Button className="bg-purple-500" type="submit" disabled={loading}>
                 {loading ? "Adding..." : "Add"}
               </Button>
             </DialogFooter>

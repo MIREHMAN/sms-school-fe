@@ -6,10 +6,30 @@ class TeacherService {
     return makeRequest("teachers", { method: "GET" });
   }
 
+  getTeacherById(id) {
+    return makeRequest(`teachers/${id}/`, {
+      method: "GET",
+    });
+  }
+
   addTeacher(data) {
     console.log("Sending data", data);
     return makeRequest("teachers/", {
       method: "POST",
+      data,
+    });
+  }
+
+  updateTeacher(id, data) {
+    return makeRequest(`teachers/${id}/`, {
+      method: "PUT",
+      data,
+    });
+  }
+
+  patchTeacher(id, data) {
+    return makeRequest(`teachers/${id}/`, {
+      method: "PATCH",
       data,
     });
   }
@@ -19,11 +39,6 @@ class TeacherService {
       method: "DELETE",
     });
   }
-
-  // Optionally include these if needed:
-  // getTeacherById(id) { ... }
-  // updateTeacher(id, data) { ... }
-  // patchTeacher(id, data) { ... }
 }
 
 const service = new TeacherService();

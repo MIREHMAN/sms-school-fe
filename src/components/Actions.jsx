@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import ConfirmDialog from "@/components/modals/ConfirmDeleteDialog";
 import { TeacherService } from "@/services/TeacherService";
 
-const Actions = ({ item, item_id, onDeleted }) => {
+const Actions = ({ item, item_id, onDeleted, onEdit }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const handleDelete = async () => {

@@ -29,7 +29,11 @@ const Actions = ({ item, item_id, onDeleted, onEdit }) => {
         >
           <Eye size={16} />
         </Link>
-        <button className="p-2 rounded hover:bg-gray-100" title="Edit">
+        <button
+          className="p-2 rounded hover:bg-gray-100"
+          title="Edit"
+          onClick={() => onEdit()} // This was missing!
+        >
           <Pencil size={16} />
         </button>
         <button

@@ -15,6 +15,7 @@ import Actions from "@/components/Actions";
 class Student {
   constructor({
     id,
+    student_code,
     first_name,
     last_name,
     email,
@@ -24,6 +25,7 @@ class Student {
     classroom,
   }) {
     this.id = id;
+    this.student_code = student_code // Shorten ID for display
     this.name = `${first_name} ${last_name}`; // Combine first and last name
     this.email = email;
     this.img = "/avatar.png"; // Default image
@@ -49,8 +51,8 @@ const columns = [
   { header: "Class", accessor: "class", className: "hidden md:table-cell" },
   { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
   {
-    header: "DoA",
-    accessor: "dateofAdmission",
+    header: "DOB",
+    accessor: "birthDate",
     className: "hidden lg:table-cell",
   },
   { header: "Actions", accessor: "action" },
@@ -144,13 +146,13 @@ export default function StudentListPage() {
           <span className="text-xs text-gray-500">{student.email}</span>
         </div>
       </td>
-      <td className="hidden md:table-cell">{student.id}</td>
+      <td className="hidden md:table-cell">{student.student_code}</td>
       {/* <td className="hidden md:table-cell">{student.gender}</td> */}
       <td className="hidden md:table-cell">
         {student.classes.map((c) => c.name).join(", ") || "N/A"}
       </td>
       <td className="hidden lg:table-cell">{student.phone || "—"}</td>
-      <td className="hidden lg:table-cell">{student.dateofAdmission || "—"}</td>
+      <td className="hidden lg:table-cell">{student.birthDate || "—"}</td>
       <td>
         {/* <Actions
           onEdit={() => handleEditClick(student.id)}

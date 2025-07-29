@@ -3,7 +3,7 @@ import { makeRequest } from "@/config/makeRequest";
 class ClassService {
   // GET all classes
   getAllClasses() {
-    return makeRequest("classes", {
+    return makeRequest("classes/", {
       method: "GET",
     });
   }

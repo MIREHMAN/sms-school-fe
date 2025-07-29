@@ -1,4 +1,3 @@
-//TeacherListPage.jsx
 import { useEffect, useState } from "react";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -8,7 +7,8 @@ import { Plus } from "lucide-react";
 import { useAsync } from "@/hooks/useAsync";
 import { TeacherService } from "@/services/TeacherService";
 import AddTeacherModal from "@/components/modals/AddTeacherModal";
-import { debounce } from "@/lib/debounce"; // You'll need to create this utility
+import EditTeacherModal from "@/components/modals/EditTeacherModal";
+import { debounce } from "@/lib/debounce";
 import FilterButton from "@/components/FilterButton";
 
 const columns = [
@@ -39,7 +39,9 @@ const renderRow = (item, index, onDelete, onEdit) => (
         <p className="text-xs text-gray-500">{item.email}</p>
       </div>
     </td>
-    <td className="hidden md:table-cell">{item.id}</td>
+    <td className="hidden md:table-cell" title={item.teacher_code}>
+      {item.teacher_code}
+    </td>
     <td className="hidden md:table-cell">{item.date_of_birth}</td>
     <td className="hidden lg:table-cell">{item.phone_number || "—"}</td>
     <td>
@@ -65,7 +67,7 @@ const Header = ({
     </h1>
     <div className="flex items-center gap-4 w-full sm:w-auto">
       <TableSearch onChange={onSearchChange} value={searchValue} />
-<FilterButton/>
+      <FilterButton />
       <button
         onClick={() => setIsModalOpen(true)}
         className="bg-purple-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm"
@@ -73,10 +75,6 @@ const Header = ({
         <Plus size={19} className="lg:hidden" />
         <span className="hidden sm:inline text-sm">Add Teacher</span>
       </button>
-      <AddTeacherModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   </header>
 );
@@ -85,7 +83,8 @@ const TeacherListPage = () => {
   const [teachers, setTeachers] = useState([]);
   const [filteredTeachers, setFilteredTeachers] = useState([]);
   const [totalResults, setTotalResults] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editTeacher, setEditTeacher] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -95,6 +94,7 @@ const TeacherListPage = () => {
 
   useEffect(() => {
     if (value && Array.isArray(value.results)) {
+      console.log("Fetched teachers:", value.results);
       setTeachers(value.results);
       setFilteredTeachers(value.results);
       setTotalResults(value.count || 0);
@@ -105,7 +105,6 @@ const TeacherListPage = () => {
     }
   }, [value]);
 
-  // Search function
   const handleSearch = (term) => {
     if (!term) {
       setFilteredTeachers(teachers);
@@ -124,7 +123,6 @@ const TeacherListPage = () => {
     setFilteredTeachers(filtered);
   };
 
-  // Debounced search to improve performance
   const debouncedSearch = debounce(handleSearch, 300);
 
   const handleSearchChange = (e) => {
@@ -140,15 +138,30 @@ const TeacherListPage = () => {
 
   const handleEdit = (teacher) => {
     setEditTeacher(teacher);
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
+  };
+
+  const handleTeacherUpdated = (updatedTeacher) => {
+    setTeachers((prev) =>
+      prev.map((t) => (t.id === updatedTeacher.id ? updatedTeacher : t))
+    );
+    setFilteredTeachers((prev) =>
+      prev.map((t) => (t.id === updatedTeacher.id ? updatedTeacher : t))
+    );
+  };
+
+  const handleTeacherAdded = (newTeacher) => {
+    setTeachers((prev) => [newTeacher, ...prev]);
+    setFilteredTeachers((prev) => [newTeacher, ...prev]);
+    setTotalResults((prev) => prev + 1);
   };
 
   return (
     <section className="bg-white p-6 rounded-md flex-1 m-4 mt-0">
       <div className="max-w-7xl mx-auto">
         <Header
-          setIsModalOpen={setIsModalOpen}
-          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsAddModalOpen}
+          isModalOpen={isAddModalOpen}
           searchValue={searchTerm}
           onSearchChange={handleSearchChange}
         />
@@ -163,16 +176,19 @@ const TeacherListPage = () => {
               }
               data={filteredTeachers}
             />
-            <Pagination totalPages={1} totalResults={totalResults} />
+            <Pagination totalPages={5} totalResults={totalResults} />
           </>
         )}
         <AddTeacherModal
-          open={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setEditTeacher(null);
-          }}
+          open={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onTeacherAdded={handleTeacherAdded}
+        />
+        <EditTeacherModal
+          open={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
           teacher={editTeacher}
+          onTeacherUpdated={handleTeacherUpdated}
         />
       </div>
     </section>

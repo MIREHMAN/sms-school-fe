@@ -11,6 +11,7 @@ import { ParentService } from "@/services/ParentService";
 class Parent {
   constructor({
     id,
+    parent_code,
     first_name,
     last_name,
     img,
@@ -20,6 +21,7 @@ class Parent {
     address,
   }) {
     this.id = id;
+    this.parent_code = parent_code; // Shorten ID for display
     this.first_name = first_name;
     this.last_name = last_name;
     this.name = `${first_name} ${last_name}`;
@@ -34,6 +36,7 @@ class Parent {
   getFullInfo() {
     return {
       id: this.id,
+      parent_code: this.parent_code,
       first_name: this.first_name,
       last_name: this.last_name,
       email: this.email,
@@ -58,7 +61,7 @@ const columns = [
     accessor: "children",
     className: "hidden md:table-cell",
   },
-  { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
+  // { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
   { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
   { header: "Address", accessor: "address", className: "hidden lg:table-cell" },
   { header: "Actions", accessor: "action" },
@@ -112,12 +115,14 @@ const ParentListPage = () => {
         console.log("API Response:", response); // Debug log
 
         const data = response.results || response || []; // Handle different response structures
+        console.log("Fetched Parents Data:", data); // Debug log
 
         const formatted = data.map((item, index) => {
           return new Parent({
-            id: item.id || `P${String(index + 1).padStart(3, "0")}`,
-            first_name: item.first_name,
-            last_name: item.last_name,
+            id: item.id,
+            parent_code: item.parent_code,
+              first_name: item.first_name,
+              last_name: item.last_name,
             email: item.email,
             phone_number: item.phone_number || item.phone,
             address: item.address,
@@ -202,7 +207,7 @@ const ParentListPage = () => {
           <p className="text-xs text-gray-500">{item.email}</p>
         </div>
       </td>
-      <td className="hidden md:table-cell">{item.id}</td>
+      <td className="hidden md:table-cell">{item.parent_code}</td>
       <td className="hidden md:table-cell">
         {item.students.length > 0
           ? item.students
@@ -210,11 +215,11 @@ const ParentListPage = () => {
               .join(", ")
           : "None"}
       </td>
-      <td className="hidden md:table-cell">
+      {/* <td className="hidden md:table-cell">
         {item.classes.length > 0
           ? item.classes.map((cls) => cls.name || cls).join(", ")
           : "None"}
-      </td>
+      </td> */}
       <td className="hidden lg:table-cell">{item.phone_number}</td>
       <td className="hidden lg:table-cell">{item.address}</td>
       <td>

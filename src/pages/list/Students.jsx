@@ -1,16 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { Plus } from "lucide-react";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { StudentService } from "@/services/StudentService";
-import AddStudentModal from "@/components/modals/AddStudentModal"; // 👈 Import
+import AddStudentModal from "@/components/modals/AddStudentModal";
 import FilterButton from "@/components/FilterButton";
 import Actions from "@/components/Actions";
-// import EditStudentModal from "@/modals/EditStudentModal";
-// import DeleteConfirmModal from "@/modals/DeleteConfirmModal";
 
 class Student {
   constructor({
@@ -25,18 +23,21 @@ class Student {
     classroom,
   }) {
     this.id = id;
-    this.student_code = student_code // Shorten ID for display
-    this.name = `${first_name} ${last_name}`; // Combine first and last name
+    this.student_code = student_code;
+    this.name = `${first_name} ${last_name}`;
     this.email = email;
-    this.img = "/avatar.png"; // Default image
-    // this.gender = "N/A"; // Not provided in response
-    this.dateofAdmission = "N/A"; // Not provided in response
-    this.classes = classroom ? [classroom] : []; // Assuming classroom maps to classes
+    this.img = "/avatar.png";
+    this.classes = classroom
+      ? [
+          {
+            id: classroom.id,
+            name: classroom.class_name || `Grade ${classroom.id}`,
+          },
+        ]
+      : [];
     this.phone = phone_number;
     this.address = address;
-    this.birthDate = date_of_birth;
-    this.parentName = "N/A"; // Not provided in response
-    this.parentPhone = "N/A"; // Not provided in response
+    this.birthDate = date_of_birth?.split("T")[0] || "N/A";
   }
 }
 
@@ -47,171 +48,182 @@ const columns = [
     accessor: "studentId",
     className: "hidden md:table-cell",
   },
-  // { header: "Gender", accessor: "gender", className: "hidden md:table-cell" },
   { header: "Class", accessor: "class", className: "hidden md:table-cell" },
   { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
-  {
-    header: "DOB",
-    accessor: "birthDate",
-    className: "hidden lg:table-cell",
-  },
+  { header: "DOB", accessor: "birthDate", className: "hidden lg:table-cell" },
   { header: "Actions", accessor: "action" },
 ];
-
-// const Actions = ({ onEdit, onDelete }) => (
-//   <div className="flex gap-2">
-//     <button
-//       onClick={(e) => {
-//         e.stopPropagation();
-//         onEdit();
-//       }}
-//       className="p-1.5 rounded-md hover:bg-gray-100 text-blue-500 hover:text-blue-700"
-//       aria-label="Edit"
-//     >
-//       <Edit2 size={16} />
-//     </button>
-//     <button
-//       onClick={(e) => {
-//         e.stopPropagation();
-//         onDelete();
-//       }}
-//       className="p-1.5 rounded-md hover:bg-gray-100 text-red-500 hover:text-red-700"
-//       aria-label="Delete"
-//     >
-//       <Trash2 size={16} />
-//     </button>
-//   </div>
-// );
 
 export default function StudentListPage() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [currentStudent, setCurrentStudent] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch all students
-  const fetchStudents = async () => {
+  const fetchStudents = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await StudentService.getAllStudents();
-      const data = Array.isArray(response)
-        ? response
-        : response?.students || response?.results || [];
-      console.log("Fetched students:", data);
-      const formattedStudents = data.map((s) => new Student(s));
+      const studentsResponse = await StudentService.getAllStudents();
+
+      const studentsData = Array.isArray(studentsResponse)
+        ? studentsResponse
+        : studentsResponse?.students || studentsResponse?.results || [];
+      console.log("Fetched students:", studentsData);
+
+      const formattedStudents = studentsData.map(
+        (student) => new Student(student)
+      );
+
       setStudents(formattedStudents);
     } catch (err) {
       console.error("Error fetching students:", err);
-      setError("Failed to load students.");
+      setError("Failed to load students. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchStudents();
-  }, []);
+  }, [fetchStudents]);
 
-  const handleEditClick = (id) => {
-    const student = students.find((s) => s.id === id);
-    setCurrentStudent(student);
-    setIsEditModalOpen(true);
+  const handleSearch = (query) => {
+    setSearchQuery(query.toLowerCase());
   };
 
-  const handleDeleteClick = (id) => {
-    const student = students.find((s) => s.id === id);
-    setCurrentStudent(student);
-    setIsDeleteModalOpen(true);
+  const filteredStudents = searchQuery
+    ? students.filter(
+        (student) =>
+          student.name.toLowerCase().includes(searchQuery) ||
+          student.email.toLowerCase().includes(searchQuery) ||
+          student.student_code.toLowerCase().includes(searchQuery) ||
+          student.classes.some((c) =>
+            c.name.toLowerCase().includes(searchQuery)
+          )
+      )
+    : students;
+
+  const handleDeleteStudent = async (studentId) => {
+    try {
+      await StudentService.deleteStudent(studentId);
+      fetchStudents();
+    } catch (err) {
+      console.error("Error deleting student:", err);
+      setError("Failed to delete student. Please try again.");
+    }
   };
 
   const renderRow = (student) => (
-    <tr
-      key={student.id}
-      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-purple-50"
-    >
-      <td className="flex items-center gap-4 p-4">
+    <tr key={student.id} className="border-b border-gray-200 hover:bg-gray-50">
+      <td className="flex items-center gap-3 p-3">
         <img
-          src={student.img || "/avatar.png"}
+          src={student.img}
           alt="Avatar"
-          width={40}
-          height={40}
-          className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
+          className="w-8 h-8 rounded-full object-cover"
         />
         <div className="flex flex-col">
-          <span className="font-semibold text-black">{student.name}</span>
+          <span className="font-medium text-sm">{student.name}</span>
           <span className="text-xs text-gray-500">{student.email}</span>
         </div>
       </td>
-      <td className="hidden md:table-cell">{student.student_code}</td>
-      {/* <td className="hidden md:table-cell">{student.gender}</td> */}
-      <td className="hidden md:table-cell">
-        {student.classes.map((c) => c.name).join(", ") || "N/A"}
+      <td className="hidden md:table-cell text-sm">{student.student_code}</td>
+      <td className="hidden md:table-cell text-sm">
+        {student.classes[0]?.name || "Unassigned"}
       </td>
-      <td className="hidden lg:table-cell">{student.phone || "—"}</td>
-      <td className="hidden lg:table-cell">{student.birthDate || "—"}</td>
+      <td className="hidden lg:table-cell text-sm">{student.phone || "—"}</td>
+      <td className="hidden lg:table-cell text-sm">{student.birthDate}</td>
       <td>
-        {/* <Actions
-          onEdit={() => handleEditClick(student.id)}
-          onDelete={() => handleDeleteClick(student.id)}
-        /> */}
-        <Actions />
+        <Actions
+          itemId={student.id}
+          viewPath={`/students/${student.id}`}
+          itemType="student"
+          onEdit={() => console.log("Edit", student.id)}
+          deleteService={StudentService.deleteStudent}
+          refreshData={fetchStudents}
+        />
       </td>
     </tr>
   );
 
   return (
-    <section className="bg-white p-6 rounded-md flex-1 m-4 mt-0">
+    <section className="bg-white p-4 rounded-md flex-1 m-4 mt-0 text-sm">
       <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <h1 className="hidden md:block text-lg font-bold text-gray-800">
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+          <h1 className="hidden md:block text-base font-semibold text-gray-800">
             All Students
           </h1>
-
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <TableSearch />
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <TableSearch
+              placeholder="Search students..."
+              onSearch={handleSearch}
+            />
             <FilterButton />
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="bg-purple-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-sm hover:bg-purple-600"
+              className="bg-purple-500 text-white px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm hover:bg-purple-600 text-sm"
             >
-              <Plus size={19} className="lg:hidden" />
-              <span className="hidden sm:inline text-sm">Add Student</span>
+              <Plus size={16} className="lg:hidden" />
+              <span className="hidden sm:inline">Add Student</span>
             </button>
           </div>
         </header>
 
         {loading ? (
-          <p className="text-gray-600 text-sm">Loading students...</p>
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
         ) : error ? (
-          <p className="text-red-500">{error}</p>
-        ) : students.length === 0 ? (
-          <p className="text-gray-500">No students found.</p>
+          <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg text-sm">
+            {error}
+            <button
+              onClick={fetchStudents}
+              className="ml-3 text-purple-600 hover:text-purple-800 text-sm"
+            >
+              Retry
+            </button>
+          </div>
+        ) : filteredStudents.length === 0 ? (
+          <div className="text-center py-12 text-gray-500 bg-white rounded-xl shadow-sm text-sm">
+            <div className="mx-auto w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+              <Plus size={20} className="text-gray-400" />
+            </div>
+            <h3 className="text-sm font-medium mb-1">No students found</h3>
+            <p className="text-xs">
+              Try a different search or add a new student
+            </p>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="mt-3 px-3 py-1.5 bg-purple-600 text-white rounded-lg inline-flex items-center text-sm"
+            >
+              <Plus size={14} className="mr-1.5" />
+              Add a new student
+            </button>
+          </div>
         ) : (
           <>
-            <Table columns={columns} renderRow={renderRow} data={students} />
-            <Pagination totalPages={5} totalResults={students.length} />
+            <Table
+              columns={columns}
+              data={filteredStudents}
+              renderRow={renderRow}
+            />
+            <Pagination
+              currentPage={1}
+              totalPages={Math.ceil(filteredStudents.length / 10)}
+              onPageChange={(page) => console.log("Page changed", page)}
+            />
           </>
         )}
       </div>
 
-      {/* 👉 Add Student Modal */}
       <AddStudentModal
         open={isAddModalOpen}
         onClose={() => {
           setIsAddModalOpen(false);
-          fetchStudents(); // Refresh student list after adding
+          fetchStudents();
         }}
       />
-
-      {/* 👉 Edit Student Modal (Coming soon) */}
-      {/* <EditStudentModal open={isEditModalOpen} student={currentStudent} onClose={() => setIsEditModalOpen(false)} /> */}
-
-      {/* 👉 Delete Confirmation Modal (Coming soon) */}
-      {/* <DeleteConfirmModal open={isDeleteModalOpen} student={currentStudent} onConfirm={() => handleDeleteStudent(currentStudent?.id)} onClose={() => setIsDeleteModalOpen(false)} /> */}
     </section>
   );
 }

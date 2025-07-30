@@ -47,6 +47,7 @@ const EditTeacherModal = ({ open, onClose, teacher, onTeacherUpdated }) => {
     setShowConfirm(false);
 
     try {
+      console.log("Submitting updated teacher data:", formData);
       const updatedTeacher = await TeacherService.updateTeacher(
         teacher.id,
         formData

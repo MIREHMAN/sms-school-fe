@@ -1,63 +1,115 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, X, BookOpen, ChevronRight, Users, Calendar, Bookmark, Star, Clock, BarChart } from 'lucide-react';
-import TableSearch from '@/components/TableSearch';
-import FilterButton from '@/components/FilterButton';
-import PageHeader from '@/components/PageHeader';
-import { useUser } from '@/context/UserContext';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import {
+  Plus,
+  X,
+  BookOpen,
+  ChevronRight,
+  Users,
+  Calendar,
+  Bookmark,
+  Star,
+  Clock,
+  BarChart,
+} from "lucide-react";
+import TableSearch from "@/components/TableSearch";
+import FilterButton from "@/components/FilterButton";
+import PageHeader from "@/components/PageHeader";
+import { useUser } from "@/context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { ClassService } from "@/services/ClassService";
 
 export default function ClassesPage() {
-  const [classes, setClasses] = useState([
-    { name: 'Grade 1', students: 22, category: 'Elementary', color: 'blue' },
-    { name: 'Grade 2', students: 24, category: 'Elementary', color: 'green' },
-    { name: 'Grade 3', students: 21, category: 'Elementary', color: 'purple' },
-    { name: 'Grade 4', students: 25, category: 'Elementary', color: 'pink' },
-    { name: 'Grade 5', students: 23, category: 'Elementary', color: 'yellow' },
-    { name: 'Grade 6', students: 26, category: 'Middle', color: 'blue' },
-    { name: 'Grade 7', students: 28, category: 'Middle', color: 'green' },
-    { name: 'Grade 8', students: 27, category: 'Middle', color: 'purple' },
-    { name: 'Grade 9', students: 30, category: 'High', color: 'pink' },
-    { name: 'Grade 10', students: 29, category: 'High', color: 'yellow' },
-  ]);
-
+  const [classes, setClasses] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [newClass, setNewClass] = useState('');
-  const [newCategory, setNewCategory] = useState('Elementary');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [newClass, setNewClass] = useState("");
+  const [newCategory, setNewCategory] = useState("Elementary");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState('All');
-  const [selectedLayout, setSelectedLayout] = useState('grid');
+  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [selectedLayout, setSelectedLayout] = useState("grid");
+  const [error, setError] = useState(null);
 
-  const categoryOptions = ['Elementary', 'Middle', 'High', 'Special'];
-  const colorOptions = ['blue', 'green', 'purple', 'pink', 'yellow'];
+  const categoryOptions = ["Elementary", "Middle", "High", "Special"];
+  const colorOptions = ["blue", "green", "purple", "pink", "yellow"];
 
-    const { user } = useUser();
-  const navigate = useNavigate();
+  const fetchClasses = async () => {
+    try {
+      setIsLoading(true);
+      const response = await ClassService.getAllClasses();
+      console.log("API Response:", response);
 
+      if (!response || !Array.isArray(response.results)) {
+        throw new Error("Invalid response format");
+      }
 
-useEffect(() => {
-  if (!user) {
-    navigate('/login');
-  } else {
-    // simulate a brief loading period or fetch data here
-    setTimeout(() => {
+      // Transform API data to match frontend expectations
+      const formattedClasses = response.results.map((cls) => ({
+        id: cls.id,
+        name: cls.class_name,
+        category: cls.section || "Elementary", // Use section or default
+        students: Math.floor(Math.random() * 10) + 20, // Random student count
+        color: colorOptions[Math.floor(Math.random() * colorOptions.length)],
+        teacher: cls.class_teacher,
+        room: cls.room,
+        schedule: cls.schedule,
+      }));
+
+      setClasses(formattedClasses);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to fetch classes:", err);
+      setError(
+        err.message || "Failed to load classes. Please try again later."
+      );
+      setClasses([]);
+    } finally {
       setIsLoading(false);
-    }, 500); // you can adjust or remove the timeout as needed
-  }
-}, [user]);
+    }
+  };
 
-  const handleAddClass = () => {
-    if (newClass.trim()) {
-      const randomColor = colorOptions[Math.floor(Math.random() * colorOptions.length)];
-      setClasses([...classes, {
-        name: newClass,
-        students: Math.floor(Math.random() * 10) + 20,
-        category: newCategory,
-        color: randomColor
-      }]);
-      setNewClass('');
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  const handleAddClass = async () => {
+    if (!newClass.trim()) return;
+
+    try {
+      setIsLoading(true);
+      const newClassData = {
+        class_name: newClass,
+        section: newCategory,
+        room: "1", // Default room
+        description: `${newCategory} class`,
+        schedule: "8:00 AM - 3:00 PM", // Default schedule
+        class_teacher: "Teacher Name", // Default teacher
+      };
+
+      const response = await ClassService.addClass(newClassData);
+
+      if (response.data) {
+        // Transform the response to match frontend format
+        const formattedClass = {
+          id: response.data.id,
+          name: response.data.class_name,
+          category: response.data.section || newCategory,
+          students: Math.floor(Math.random() * 10) + 20,
+          color: colorOptions[Math.floor(Math.random() * colorOptions.length)],
+          teacher: response.data.class_teacher,
+          room: response.data.room,
+          schedule: response.data.schedule,
+        };
+        setClasses((prev) => [...prev, formattedClass]);
+      }
+
+      setNewClass("");
       setShowModal(false);
+    } catch (err) {
+      console.error("Failed to add class:", err);
+      setError("Failed to add class. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,14 +117,18 @@ useEffect(() => {
     let filtered = classes;
 
     if (searchQuery) {
-      filtered = filtered.filter(cls =>
-        cls.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cls.category.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (cls) =>
+          cls.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (cls.category &&
+            cls.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (cls.teacher &&
+            cls.teacher.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
-    if (selectedFilter !== 'All') {
-      filtered = filtered.filter(cls => cls.category === selectedFilter);
+    if (selectedFilter !== "All") {
+      filtered = filtered.filter((cls) => cls.category === selectedFilter);
     }
 
     return filtered;
@@ -83,45 +139,45 @@ useEffect(() => {
   const getColorClasses = (color) => {
     const colorMap = {
       blue: {
-        bg: 'bg-blue-50',
-        text: 'text-blue-600',
-        border: 'border-blue-200',
-        progress: 'bg-blue-500',
-        hover: 'group-hover:bg-blue-600',
-        light: 'bg-blue-100'
+        bg: "bg-blue-50",
+        text: "text-blue-600",
+        border: "border-blue-200",
+        progress: "bg-blue-500",
+        hover: "group-hover:bg-blue-600",
+        light: "bg-blue-100",
       },
       green: {
-        bg: 'bg-emerald-50',
-        text: 'text-emerald-600',
-        border: 'border-emerald-200',
-        progress: 'bg-emerald-500',
-        hover: 'group-hover:bg-emerald-600',
-        light: 'bg-emerald-100'
+        bg: "bg-emerald-50",
+        text: "text-emerald-600",
+        border: "border-emerald-200",
+        progress: "bg-emerald-500",
+        hover: "group-hover:bg-emerald-600",
+        light: "bg-emerald-100",
       },
       purple: {
-        bg: 'bg-violet-50',
-        text: 'text-violet-600',
-        border: 'border-violet-200',
-        progress: 'bg-violet-500',
-        hover: 'group-hover:bg-violet-600',
-        light: 'bg-violet-100'
+        bg: "bg-violet-50",
+        text: "text-violet-600",
+        border: "border-violet-200",
+        progress: "bg-violet-500",
+        hover: "group-hover:bg-violet-600",
+        light: "bg-violet-100",
       },
       pink: {
-        bg: 'bg-pink-50',
-        text: 'text-pink-600',
-        border: 'border-pink-200',
-        progress: 'bg-pink-500',
-        hover: 'group-hover:bg-pink-600',
-        light: 'bg-pink-100'
+        bg: "bg-pink-50",
+        text: "text-pink-600",
+        border: "border-pink-200",
+        progress: "bg-pink-500",
+        hover: "group-hover:bg-pink-600",
+        light: "bg-pink-100",
       },
       yellow: {
-        bg: 'bg-amber-50',
-        text: 'text-amber-600',
-        border: 'border-amber-200',
-        progress: 'bg-amber-500',
-        hover: 'group-hover:bg-amber-600',
-        light: 'bg-amber-100'
-      }
+        bg: "bg-amber-50",
+        text: "text-amber-600",
+        border: "border-amber-200",
+        progress: "bg-amber-500",
+        hover: "group-hover:bg-amber-600",
+        light: "bg-amber-100",
+      },
     };
 
     return colorMap[color] || colorMap.blue;
@@ -129,11 +185,16 @@ useEffect(() => {
 
   const getIconByCategory = (category) => {
     switch (category) {
-      case 'Elementary': return <BookOpen size={16} />;
-      case 'Middle': return <Bookmark size={16} />;
-      case 'High': return <BarChart size={16} />;
-      case 'Special': return <Star size={16} />;
-      default: return <BookOpen size={16} />;
+      case "Elementary":
+        return <BookOpen size={16} />;
+      case "Middle":
+        return <Bookmark size={16} />;
+      case "High":
+        return <BarChart size={16} />;
+      case "Special":
+        return <Star size={16} />;
+      default:
+        return <BookOpen size={16} />;
     }
   };
 
@@ -143,7 +204,7 @@ useEffect(() => {
 
     return (
       <div
-        key={index}
+        key={cls.id || index}
         className="relative rounded-xl p-0 bg-white shadow-sm group border transition-all hover:shadow-md overflow-hidden"
       >
         <div className={`h-1 w-full ${colorClasses.progress}`}></div>
@@ -154,13 +215,15 @@ useEffect(() => {
 
         <div className="p-5">
           <div className="flex justify-between items-center mb-3">
-            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${colorClasses.bg} ${colorClasses.text}`}>
+            <span
+              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${colorClasses.bg} ${colorClasses.text}`}
+            >
               {getIconByCategory(cls.category)}
               <span className="ml-1">{cls.category}</span>
             </span>
             <div className="text-sm text-gray-500 flex items-center">
               <Clock size={14} className="mr-1" />
-              {index % 3 === 0 ? 'Today' : index % 3 === 1 ? 'Tomorrow' : 'Next week'}
+              {cls.schedule || "8:00 AM - 3:00 PM"}
             </div>
           </div>
 
@@ -169,6 +232,8 @@ useEffect(() => {
           <div className="flex items-center mb-4 text-gray-500 text-sm">
             <Users size={14} className="mr-1" />
             <span>{cls.students} students</span>
+            <span className="mx-2">•</span>
+            <span>Room: {cls.room || "N/A"}</span>
           </div>
 
           <div className="w-full bg-gray-100 rounded-full h-2 mb-3">
@@ -182,12 +247,16 @@ useEffect(() => {
             <span className="text-xs text-gray-500">
               {cls.students}/35 capacity
             </span>
-            <Link to={`/classes/`}> 
-            <button
-              className={`${colorClasses.bg} ${colorClasses.text} text-sm font-medium px-3 py-1 rounded-lg flex items-center group-hover:bg-opacity-100 transition-all`}
-            >
-              View <ChevronRight size={14} className="ml-1 transform group-hover:translate-x-1 transition-transform" />
-            </button>
+            <Link to={`/classes/${cls.id}`}>
+              <button
+                className={`${colorClasses.bg} ${colorClasses.text} text-sm font-medium px-3 py-1 rounded-lg flex items-center group-hover:bg-opacity-100 transition-all`}
+              >
+                View{" "}
+                <ChevronRight
+                  size={14}
+                  className="ml-1 transform group-hover:translate-x-1 transition-transform"
+                />
+              </button>
             </Link>
           </div>
         </div>
@@ -196,7 +265,10 @@ useEffect(() => {
   };
 
   const renderSkeletonCard = (index) => (
-    <div key={index} className="border rounded-xl p-5 bg-white shadow animate-pulse">
+    <div
+      key={index}
+      className="border rounded-xl p-5 bg-white shadow animate-pulse"
+    >
       <div className="h-1 w-full bg-gray-200 mb-4"></div>
       <div className="flex justify-between mb-3">
         <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
@@ -215,11 +287,19 @@ useEffect(() => {
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       <div className="max-w-7xl mx-auto">
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-lg border border-red-200">
+            {error}
+          </div>
+        )}
 
-        {/* Header */}
-        <PageHeader PageName={"Clasess"} searchValue={searchQuery} onSearchChange={(e) => setSearchQuery(e.target.value)} OnClick={() => setShowModal(true)} />
+        <PageHeader
+          PageName={"Classes"}
+          searchValue={searchQuery}
+          onSearchChange={(e) => setSearchQuery(e.target.value)}
+          OnClick={() => setShowModal(true)}
+        />
 
-        {/* Cards */}
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[...Array(8)].map((_, index) => renderSkeletonCard(index))}
@@ -242,49 +322,73 @@ useEffect(() => {
                 </button>
               </div>
             ) : (
-              <div className={selectedLayout === 'grid'
-                ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-                : "space-y-4"
-              }>
+              <div
+                className={
+                  selectedLayout === "grid"
+                    ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                    : "space-y-4"
+                }
+              >
                 {filteredClasses.map((cls, index) => {
-                  return selectedLayout === 'grid'
-                    ? renderClassCard(cls, index)
-                    : (
-                      <div key={index} className="flex items-center bg-white rounded-xl p-4 border shadow-sm hover:shadow-md transition-all">
-                        <div className={`w-2 h-16 rounded-full mr-4 ${getColorClasses(cls.color).progress}`}></div>
-                        <div className="flex-grow">
-                          <div className="flex items-center mb-1">
-                            <h3 className="font-bold text-lg text-gray-800 mr-3">{cls.name}</h3>
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getColorClasses(cls.color).bg} ${getColorClasses(cls.color).text}`}>
-                              {cls.category}
-                            </span>
-                          </div>
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Users size={14} className="mr-1" />
-                            <span>{cls.students} students</span>
-                            <span className="mx-2">•</span>
-                            <span>{cls.students}/35 capacity</span>
-                          </div>
+                  return selectedLayout === "grid" ? (
+                    renderClassCard(cls, index)
+                  ) : (
+                    <div
+                      key={cls.id || index}
+                      className="flex items-center bg-white rounded-xl p-4 border shadow-sm hover:shadow-md transition-all"
+                    >
+                      <div
+                        className={`w-2 h-16 rounded-full mr-4 ${
+                          getColorClasses(cls.color).progress
+                        }`}
+                      ></div>
+                      <div className="flex-grow">
+                        <div className="flex items-center mb-1">
+                          <h3 className="font-bold text-lg text-gray-800 mr-3">
+                            {cls.name}
+                          </h3>
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                              getColorClasses(cls.color).bg
+                            } ${getColorClasses(cls.color).text}`}
+                          >
+                            {cls.category}
+                          </span>
                         </div>
-                      
-                        <button className={`${getColorClasses(cls.color).bg} ${getColorClasses(cls.color).text} px-4 py-2 rounded-lg ml-4`}>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Users size={14} className="mr-1" />
+                          <span>{cls.students} students</span>
+                          <span className="mx-2">•</span>
+                          <span>Room: {cls.room || "N/A"}</span>
+                          <span className="mx-2">•</span>
+                          <span>{cls.teacher}</span>
+                        </div>
+                      </div>
+
+                      <Link to={`/classes/${cls.id}`}>
+                        <button
+                          className={`${getColorClasses(cls.color).bg} ${
+                            getColorClasses(cls.color).text
+                          } px-4 py-2 rounded-lg ml-4`}
+                        >
                           View
                         </button>
-                       
-                      </div>
-                    );
+                      </Link>
+                    </div>
+                  );
                 })}
               </div>
             )}
           </>
         )}
 
-        {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
             <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-800">Add New Class</h2>
+                <h2 className="text-xl font-bold text-gray-800">
+                  Add New Class
+                </h2>
                 <button
                   onClick={() => setShowModal(false)}
                   className="text-gray-400 hover:text-gray-600 hover:rotate-90 transition-transform"
@@ -295,7 +399,9 @@ useEffect(() => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Class Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Class Name
+                  </label>
                   <input
                     type="text"
                     className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
@@ -307,16 +413,19 @@ useEffect(() => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Category
+                  </label>
                   <div className="flex flex-wrap gap-2">
-                    {categoryOptions.map(category => (
+                    {categoryOptions.map((category) => (
                       <button
                         key={category}
                         type="button"
-                        className={`px-3 py-1.5 rounded-lg text-sm flex items-center ${newCategory === category
-                            ? 'bg-purple-100 text-purple-600 border-2 border-purple-300'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-2 border-transparent'
-                          }`}
+                        className={`px-3 py-1.5 rounded-lg text-sm flex items-center ${
+                          newCategory === category
+                            ? "bg-purple-100 text-purple-600 border-2 border-purple-300"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200 border-2 border-transparent"
+                        }`}
                         onClick={() => setNewCategory(category)}
                       >
                         {getIconByCategory(category)}
@@ -329,14 +438,22 @@ useEffect(() => {
                 <div className="pt-2">
                   <div className="bg-purple-50 p-3 rounded-lg border border-purple-400 flex items-start">
                     <div className="text-purple-500 mt-0.5 mr-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
                       </svg>
                     </div>
                     <p className="text-sm text-purple-700">
-                      Class capacity is set to 35 students by default. You can change this later in the class settings.
+                      Class capacity is set to 35 students by default. You can
+                      change this later in the class settings.
                     </p>
                   </div>
                 </div>

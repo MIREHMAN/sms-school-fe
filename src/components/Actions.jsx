@@ -1,19 +1,25 @@
-// Actions.jsx
 import { useState } from "react";
 import { Eye, Pencil, Trash } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "@/components/modals/ConfirmDeleteDialog";
-import { TeacherService } from "@/services/TeacherService";
 
-const Actions = ({ item, item_id, onDeleted, onEdit }) => {
+const Actions = ({
+  itemId,
+  viewPath, // e.g., "/teachers/:id"
+  onEdit,
+  deleteService,
+  itemName = "item", // For confirmation dialog
+  onDeleteSuccess, // Callback after deletion
+}) => {
+  const navigate = useNavigate();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const handleDelete = async () => {
     try {
-      await TeacherService.deleteTeacher(item_id);
-      onDeleted?.();
+      await deleteService(itemId);
+      onDeleteSuccess?.(); // Refresh data
     } catch (error) {
-      console.error("Delete error", error);
+      console.error("Delete failed:", error);
     } finally {
       setIsConfirmOpen(false);
     }
@@ -22,32 +28,39 @@ const Actions = ({ item, item_id, onDeleted, onEdit }) => {
   return (
     <>
       <div className="flex items-center gap-2">
-        <Link
-          to={`/${item}/${item_id}`}
+        {/* View Button (Eye) */}
+        <button
+          onClick={() => navigate(viewPath.replace(":id", itemId))}
           className="p-2 rounded hover:bg-gray-100"
           title="View"
         >
-          <Eye size={16} />
-        </Link>
+          <Eye size={16} className="text-gray-600" />
+        </button>
+
+        {/* Edit Button */}
         <button
+          onClick={() => onEdit(itemId)}
           className="p-2 rounded hover:bg-gray-100"
           title="Edit"
-          onClick={() => onEdit()} // This was missing!
         >
-          <Pencil size={16} />
+          <Pencil size={16} className="text-gray-600" />
         </button>
+
+        {/* Delete Button */}
         <button
+          onClick={() => setIsConfirmOpen(true)}
           className="p-2 rounded hover:bg-red-100 text-red-600"
           title="Delete"
-          onClick={() => setIsConfirmOpen(true)}
         >
           <Trash size={16} />
         </button>
       </div>
+
+      {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         open={isConfirmOpen}
-        title="Confirm Deletion"
-        message="Are you sure you want to delete this teacher?"
+        title={`Delete ${itemName}?`}
+        message={`Are you sure you want to delete this ${itemName}?`}
         onConfirm={handleDelete}
         onCancel={() => setIsConfirmOpen(false)}
       />

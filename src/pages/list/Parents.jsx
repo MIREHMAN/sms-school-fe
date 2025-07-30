@@ -6,6 +6,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { ParentService } from "@/services/ParentService";
+import { StudentService } from "@/services/StudentService";
 
 // Parent Model
 class Parent {
@@ -61,45 +62,18 @@ const columns = [
     accessor: "children",
     className: "hidden md:table-cell",
   },
-  // { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
   { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
   { header: "Address", accessor: "address", className: "hidden lg:table-cell" },
   { header: "Actions", accessor: "action" },
 ];
 
-// Actions Component
-// const Actions = ({ onEdit, onDelete }) => (
-//   <div className="flex gap-2">
-//     <button
-//       onClick={(e) => {
-//         e.stopPropagation();
-//         onEdit();
-//       }}
-//       className="p-1.5 rounded-md hover:bg-gray-100 text-blue-500 hover:text-blue-700"
-//       aria-label="Edit"
-//     >
-//       <Edit2 size={16} />
-//     </button>
-//     <button
-//       onClick={(e) => {
-//         e.stopPropagation();
-//         onDelete();
-//       }}
-//       className="p-1.5 rounded-md hover:bg-gray-100 text-red-500 hover:text-red-700"
-//       aria-label="Delete"
-//     >
-//       <Trash2 size={16} />
-//     </button>
-//   </div>
-// );
-
-// Modals
 import ParentModal from "@/components/modals/AddParentModal";
 import ConfirmDeleteModal from "@/components/modals/ConfirmDeleteDialog";
 import Actions from "@/components/Actions";
 
 const ParentListPage = () => {
   const [parents, setParents] = useState([]);
+  const [students, setStudents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -108,21 +82,29 @@ const ParentListPage = () => {
 
   // Fetch data on mount
   useEffect(() => {
-    const fetchParents = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await ParentService.getAllParents();
-        console.log("API Response:", response); // Debug log
+        // Fetch parents and students in parallel
+        const [parentsResponse, studentsResponse] = await Promise.all([
+          ParentService.getAllParents(),
+          StudentService.getAllStudents(),
+        ]);
 
-        const data = response.results || response || []; // Handle different response structures
-        console.log("Fetched Parents Data:", data); // Debug log
+        console.log("API Responses:", { parentsResponse, studentsResponse });
 
-        const formatted = data.map((item, index) => {
+        // Process students
+        const studentsData = studentsResponse.results || studentsResponse || [];
+        setStudents(studentsData);
+
+        // Process parents
+        const parentsData = parentsResponse.results || parentsResponse || [];
+        const formattedParents = parentsData.map((item) => {
           return new Parent({
             id: item.id,
             parent_code: item.parent_code,
-              first_name: item.first_name,
-              last_name: item.last_name,
+            first_name: item.first_name,
+            last_name: item.last_name,
             email: item.email,
             phone_number: item.phone_number || item.phone,
             address: item.address,
@@ -131,17 +113,34 @@ const ParentListPage = () => {
           });
         });
 
-        console.log("Formatted Parents:", formatted); // Debug log
-        setParents(formatted);
+        setParents(formattedParents);
       } catch (err) {
-        console.error("Failed to fetch parents:", err);
+        console.error("Failed to fetch data:", err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchParents();
+    fetchData();
   }, []);
+
+  // Helper function to get student names from IDs
+  const getStudentNames = (studentIds) => {
+    if (!Array.isArray(studentIds)) return "None";
+
+    return (
+      studentIds
+        .map((studentId) => {
+          // Handle case where studentId might be an object with id property
+          const id = typeof studentId === "object" ? studentId.id : studentId;
+          const student = students.find((s) => s.id === id);
+          return student
+            ? `${student.first_name} ${student.last_name}`
+            : "Unknown";
+        })
+        .join(", ") || "None"
+    );
+  };
 
   // Save handler (add or edit)
   const handleSaveParent = async (parent, mode) => {
@@ -208,26 +207,14 @@ const ParentListPage = () => {
         </div>
       </td>
       <td className="hidden md:table-cell">{item.parent_code}</td>
-      <td className="hidden md:table-cell">
-        {item.students.length > 0
-          ? item.students
-              .map((student) => student.name || student.id || student)
-              .join(", ")
-          : "None"}
-      </td>
-      {/* <td className="hidden md:table-cell">
-        {item.classes.length > 0
-          ? item.classes.map((cls) => cls.name || cls).join(", ")
-          : "None"}
-      </td> */}
+      <td className="hidden md:table-cell">{getStudentNames(item.students)}</td>
       <td className="hidden lg:table-cell">{item.phone_number}</td>
       <td className="hidden lg:table-cell">{item.address}</td>
       <td>
-        {/* <Actions
+        <Actions
           onEdit={() => handleEditClick(item.id)}
           onDelete={() => handleDeleteClick(item.id)}
-        /> */}
-        <Actions /> 
+        />
       </td>
     </tr>
   );
